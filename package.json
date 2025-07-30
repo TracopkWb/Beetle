@@ -1,0 +1,24 @@
+{
+  "name": "beetle",
+  "version": "1.0.0",
+  "description": "Ray's Auto Electric's System",
+  "main": "mainScript.js",
+  "scripts": {
+    "startP": "nodemon mainScript.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TracopkWb/Beetle.git"
+  },
+  "author": "Tracopk ZT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TracopkWb/Beetle/issues"
+  },
+  "homepage": "https://github.com/TracopkWb/Beetle#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  },
+  "type" : "module"
+}

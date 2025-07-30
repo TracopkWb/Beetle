@@ -1,0 +1,5 @@
+directories.bat
+
+#Node modules not necessaries
+package-lock.json 
+node_modules
