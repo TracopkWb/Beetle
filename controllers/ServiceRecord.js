@@ -2,6 +2,7 @@ export default class ServiceRecord {
     //Attributes
 
     #serReId;
+    #serReCar;
     #serReName;
     #serReDate;
     #serReDescription;
@@ -18,15 +19,14 @@ export default class ServiceRecord {
     #serRe_milage_at_Service;
     #serRe_Finished_Date;
     #serRe_Labor_Cost;
-    #serRe_Material_List;
-    #serRe_Material_Cost;
-    #serRe_Other_List;
-    #serRe_Other_Cost;
+    #serRe_Material_List; //ArrayList [Object (material price)]
+    #serRe_Other_List; //ArrayList [Object (material price)]
 
 
-    constructor(serReId, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost, serRe_Material_List, serRe_Material_Cost, serRe_Other_Cost) {
+    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost, serRe_Material_List) {
 
         this.#serReId = serReId;
+        this.#serReCar = serReCar;
         this.#serReName = serReName;
         this.#serReDate = serReDate;
         this.#serReDescription = serReDescription;
@@ -43,13 +43,15 @@ export default class ServiceRecord {
         this.#serRe_Finished_Date = serRe_Finished_Date;
         this.#serRe_Labor_Cost = serRe_Labor_Cost;
         this.#serRe_Material_List = serRe_Material_List;
-        this.#serRe_Material_Cost = serRe_Material_Cost;
-        this.#serRe_Other_Cost = serRe_Other_Cost;
     }
 
     //Setters
     set setSerReId(serReId) {
         this.#serReId = serReId;
+    }
+
+    set setSerReCar(serReCar) {
+        this.#serReCar = serReCar;
     }
 
     set setSerReName(serReName) {
@@ -116,18 +118,8 @@ export default class ServiceRecord {
         this.#serRe_Material_List = serRe_Material_List;
     }
 
-    set setSerReMaterialCost(serRe_Material_Cost) {
-        this.#serRe_Material_Cost = serRe_Material_Cost;
-
-    }
-
     set setSerReOtherList(serRe_Other_List) {
         this.#serRe_Other_List = serRe_Other_List;
-    }
-
-    set setSerReOtherCost(serRe_Other_Cost) {
-        this.#serRe_Other_Cost = serRe_Other_Cost;
-
     }
 
     //Getter
@@ -136,6 +128,10 @@ export default class ServiceRecord {
         return this.#serReId;
     }
 
+
+    get getSerReCar() {
+        return this.#serReCar;
+    }
     get getSerReName() {
         return this.#serReName;
     }
@@ -200,24 +196,32 @@ export default class ServiceRecord {
         return this.#serRe_Material_List;
     }
 
-    get getSerReMaterialCost() {
-        return this.#serRe_Labor_Cost;
-
-    }
-
     get getSerReOtherList() {
         return this.#serRe_Other_List;
-    }
-
-    get getSerReOtherCost() {
-        return this.#serRe_Other_Cost;
-
     }
 
     //Method
     toJSON() {
         return {
-            
+            serReId: this.getSerReId,
+            serReCar: this.getSerReCar.toJSON(),
+            serReName: this.getSerReName,
+            serReDate: this.getSerReDate,
+            serReDescription: this.getSerReDescription,
+            serReComments: this.getSerReComments,
+            serReWarranty: this.getSerReWarranty,
+            serReStatusWarranty: this.getSerReStatusWarranty,
+            serReDownPayment: this.getSerReDownPayment,
+            serReStatus: this.getSerReStatus,
+            serReInitialTotal: this.getSerReInitialTotal,
+            serReTotal: this.getSerReTotal,
+            serRe_Approved_By: this.getSerReApprovedBy,
+            serRe_Responsable_Mechanic: this.getSerReResponsableMechanic,
+            serRe_milage_at_Service: this.getSerReMilageAtService,
+            serRe_Finished_Date: this.getSerReFinishedDate,
+            serRe_Labor_Cost: this.getSerReLaborCost,
+            serRe_Material_List: this.getSerReMaterialList,
+            serRe_Other_List: this.getSerReOtherList,
         }
     }
 
@@ -225,10 +229,24 @@ export default class ServiceRecord {
     static buildObject(obj) {
         return new ServiceRecord(
             obj.id,
+            obj.car,
             obj.name,
-            obj.phone,
-            obj.photo,
-            obj.biometrics
+            obj.date,
+            obj.description,
+            obj.comment,
+            obj.warranty,
+            obj.statusWarranty,
+            obj.downPayment,
+            obj.status,
+            obj.initialTotal,
+            obj.total,
+            obj._Approved_By,
+            obj._Responsable_Mechanic,
+            obj._milage_at_Service,
+            obj._Finished_Date,
+            obj._Labor_Cost,
+            obj._Material_List, //ArrayList [Object (material pri,
+            obj._Other_List,
         );
     }
 

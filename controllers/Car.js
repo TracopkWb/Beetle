@@ -184,7 +184,30 @@ export default class Car {
 
     //Methods
 
+    toJSON() {
+        return {
+            carId: this.getCarId ,
+            carManufacturer: this.getCarManufacturer ,
+            carModel: this.getCarModel ,
+            carYear: this.getCarYear ,
+            carVersion: this.getCarVersion, //Optional
+            carLicensePlate: this.getCarLicensePlatee ,
+            carVin: this.getCarVIn, //Optional
+            carCurrMilage: this.getCarCurrMilage ,
+            carOwner: this.getCarOwner ,
+            car_Registration_Date: this.getCarRegistrationDate ,
+            car_Last_Service: this.getCarLastService ,
+            car_Last_Service_Date: this.getCarLastServiceDate ,
+            car_Photo: this.getCarPhoto,
+            car_Entrance_Date: this.getCarEntranceDate ,
+            car_Exit_Date: this.getCarExitDate ,
+            car_Status: this.getCarStatus ,
+            car_Billing: this.getCarBilling ,
+        }
+    }
+
     //Static Methods
+
     static buildObject(obj) {
         return new Car(
             obj.id,
@@ -206,5 +229,6 @@ export default class Car {
             obj.billing,
         );
     }
+
 
 }

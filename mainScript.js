@@ -2,7 +2,7 @@ import carClass from './controllers/Car.js';
 import ownerClass from './controllers/Owner.js';
 import mechanicClass from './controllers/Mechanic.js';
 import MaterialClass from './controllers/MaterialUsed.js';
-// import serviceClass from './controllers/ServiceRecord.js';
+import serviceClass from './controllers/ServiceRecord.js';
 console.log("Hi Tracopk!");
 let today = new Date();
 let formattedDate = today.toLocaleDateString();
@@ -52,17 +52,41 @@ const materialData = {
     receipt: null
 }
 
-const serviceData = {
-    
-}
+
 
 
 const o1 = ownerClass.buildObject(dataOwner);
 const c1 = carClass.buildObject(carData);
 const m1 = mechanicClass.buildObject(mechanicData);
 const mat1 = MaterialClass.buildObject(materialData);
-console.log(o1.getOwnerName);
-console.log(c1.getCarId);
-console.log(m1.getMecId);
-console.log(mat1.getMatId);
+const serviceData = {
+    id: 1,
+    car: c1,
+    name: 'Ser 1',
+    date: formattedDate,
+    description: 'Description 1',
+    comment: 'Comment 1 ',
+    warranty: 6,
+    statusWarranty: true,
+    downPayment: 10,
+    status: 'in progress',
+    initialTotal: 100,
+    total: 100,
+    _Approved_By: 'none',
+    _Responsable_Mechanic: m1, //Object:
+    _milage_at_Service: 1000,
+    _Finished_Date: null,
+    _Labor_Cost: 50,
+    _Material_List: mat1, //ArrayList [Object (material price): ,
+    _Other_List: null ,
+}
+
+const s1 = serviceClass.buildObject(serviceData);
+
+// console.log(o1.toJSON());
+console.log(c1.toJSON());
+// console.log(m1.toJSON());
+// console.log(mat1.toJSON());
+// console.log(s1.toJSON());
+console.log(s1.toJSON());
 
