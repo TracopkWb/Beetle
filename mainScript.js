@@ -52,6 +52,10 @@ const materialData = {
     receipt: null
 }
 
+const serviceData = {
+    
+}
+
 
 const o1 = ownerClass.buildObject(dataOwner);
 const c1 = carClass.buildObject(carData);

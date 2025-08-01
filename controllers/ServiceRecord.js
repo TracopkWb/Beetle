@@ -117,7 +117,7 @@ export default class ServiceRecord {
     }
 
     set setSerReMaterialCost(serRe_Material_Cost) {
-        this.#serRe_Labor_Cost = serRe_Material_Cost;
+        this.#serRe_Material_Cost = serRe_Material_Cost;
 
     }
 
