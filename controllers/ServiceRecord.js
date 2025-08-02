@@ -15,15 +15,15 @@ export default class ServiceRecord {
     #serReTotal;
 
     #serRe_Approved_By;
-    #serRe_Responsable_Mechanic; //Object
+    #serRe_Responsable_Mechanic = []; //Array list [Object (mechanic)]
     #serRe_milage_at_Service;
     #serRe_Finished_Date;
     #serRe_Labor_Cost;
-    #serRe_Material_List; //ArrayList [Object (material price)]
-    #serRe_Other_List; //ArrayList [Object (material price)]
+    #serRe_Material_List = []; //ArrayList [Object (material price)]
+    #serRe_Other_List = []; //ArrayList [Object (material price)]
 
-
-    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost, serRe_Material_List) {
+    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serReTotal, serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost, serRe_Material_List = [], serRe_Other_List = []) {
+        // constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal,serReTotal, serRe_Approved_By, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost) {
 
         this.#serReId = serReId;
         this.#serReCar = serReCar;
@@ -36,13 +36,14 @@ export default class ServiceRecord {
         this.#serReDownPayment = serReDownPayment;
         this.#serReStatus = serReStatus;
         this.#serReInitialTotal = serReInitialTotal;
-        //this.#serReTotal = serReTotal;
+        this.#serReTotal = serReTotal;
         this.#serRe_Approved_By = serRe_Approved_By;
         this.#serRe_Responsable_Mechanic = serRe_Responsable_Mechanic; //Object
         this.#serRe_milage_at_Service = serRe_milage_at_Service;
         this.#serRe_Finished_Date = serRe_Finished_Date;
         this.#serRe_Labor_Cost = serRe_Labor_Cost;
         this.#serRe_Material_List = serRe_Material_List;
+        this.#serRe_Other_List = serRe_Other_List;
     }
 
     //Setters
@@ -99,7 +100,7 @@ export default class ServiceRecord {
     }
 
     set setSerReResponsableMechanic(serRe_Responsable_Mechanic) {
-        this.#serRe_Responsable_Mechanic = serRe_Responsable_Mechanic;
+        this.#serRe_Responsable_Mechanic.push(serRe_Responsable_Mechanic);
     }
 
     set setSerReMilageAtService(serRe_milage_at_Service) {
@@ -114,8 +115,8 @@ export default class ServiceRecord {
         this.#serRe_Labor_Cost = serRe_Labor_Cost;
     }
 
-    set setSerReMaterialList(serRe_Material_List) {
-        this.#serRe_Material_List = serRe_Material_List;
+    set setSerReMaterialList(material) {
+        this.#serRe_Material_List.push(material);
     }
 
     set setSerReOtherList(serRe_Other_List) {
@@ -127,7 +128,6 @@ export default class ServiceRecord {
     get getSerReId() {
         return this.#serReId;
     }
-
 
     get getSerReCar() {
         return this.#serReCar;
@@ -177,6 +177,7 @@ export default class ServiceRecord {
     }
 
     get getSerReResponsableMechanic() {
+        // console.log(typeof(this.#serRe_Responsable_Mechanic));
         return this.#serRe_Responsable_Mechanic;
     }
 
@@ -200,7 +201,52 @@ export default class ServiceRecord {
         return this.#serRe_Other_List;
     }
 
-    //Method
+    //Methods
+    addMechanic(obj) {
+        this.#serRe_Responsable_Mechanic.push(obj);
+    }
+
+    removeMechanic(obj) {
+        if (this.#serRe_Responsable_Mechanic != 0) {
+            this.#serRe_Responsable_Mechanic.pop(obj);
+        } else {
+            console.log("There has to be a mechanic in charge!");
+        }
+    }
+
+    addNewMaterial(obj) {
+        if (!obj) {
+            console.log("There is no material to be added");
+        } else {
+            // console.log(obj.toJSON());
+            this.#serRe_Material_List.push(obj);
+        }
+    }
+
+    removeMaterial(obj) {
+        if (this.#serRe_Material_List.length != 0) {
+            this.#serRe_Material_List.pop(obj);
+        } else {
+            console.log("There is not material left");
+        }
+    }
+
+    getMaterialTotal(){
+        
+        this.#serRe_Material_List.forEach(obj => {
+            console.log(obj.getMatQuantity, obj.getMatUnitCost, obj.getMatQuantity *  obj.getMatUnitCost );
+            this.total
+        })
+    }
+
+    showMechanicList() {
+        this.#serRe_Responsable_Mechanic.forEach(me => console.log(me.toJSON()));
+    }
+
+    showMaterialList() {
+        this.#serRe_Material_List.forEach(mat => console.log(mat.toJSON()));
+    }
+
     toJSON() {
         return {
             serReId: this.getSerReId,
@@ -245,7 +291,7 @@ export default class ServiceRecord {
             obj._milage_at_Service,
             obj._Finished_Date,
             obj._Labor_Cost,
-            obj._Material_List, //ArrayList [Object (material pri,
+            obj._Material_List, //ArrayList [Object (material)]
             obj._Other_List,
         );
     }

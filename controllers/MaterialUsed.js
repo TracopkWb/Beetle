@@ -1,6 +1,7 @@
 export default class MaterialUsed {
     //Attributes
     #matId;
+    #mat4Car;
     #matName;
     #matQuantity;
     #matUnitCost;
@@ -8,8 +9,9 @@ export default class MaterialUsed {
     #matSupplier;
     #matReceipt; //Photo
 
-    constructor(matId, matName, matQuantity, matUnitCost, matPurchaseDate, matSupplier, matReceipt) {
+    constructor(matId, mat4Car,matName, matQuantity, matUnitCost, matPurchaseDate, matSupplier, matReceipt) {
         this.#matId = matId;
+        this.#mat4Car = mat4Car;
         this.#matName = matName;
         this.#matQuantity = matQuantity;
         this.#matUnitCost = matUnitCost;
@@ -21,6 +23,10 @@ export default class MaterialUsed {
     //Setters
     set setMatId(matId) {
         this.#matId = matId;
+    }
+
+    set setMat4Car(mat4Car){
+        this.#mat4Car = mat4Car;
     }
 
     set setMatName(matName) {
@@ -52,6 +58,10 @@ export default class MaterialUsed {
         return this.#matId;
     }
 
+    get getMat4Car(){
+        return this.#mat4Car;
+    }
+
     get getMatName() {
         return this.#matName;
     }
@@ -79,6 +89,15 @@ export default class MaterialUsed {
      //Method
     toJSON() {
         return {
+            matId: this.getMatId,
+            mat4Car: this.getMat4Car,
+            matName: this.getMatName,
+            matQuantity: this.getMatQuantity,
+            matUnitCost: this.getMatUnitCost,
+            matPurchaseDate: this.getMatPurchaseDate,
+            matSupplier: this.getMatSupplier,
+            matReceipt: this.getMatReceipt, //Phot,
+
         }
     }
 
@@ -86,6 +105,7 @@ export default class MaterialUsed {
     static buildObject(obj) {
         return new MaterialUsed(
             obj.id,
+            obj.car,
             obj.name,
             obj.quantity,
             obj.cost,
