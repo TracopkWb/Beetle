@@ -10,21 +10,23 @@ export default class ServiceRecord {
     #serReWarranty;
     #serReStatusWarranty;
     #serReDownPayment;
-    #serReStatus;
+    #serReStatus; //Service status => pending, onprogress, finished, other
     #serReInitialTotal;
     #serReTotal;
+    #serReTotalLeft;
+    #serReStatementStatus //Paid, pending
+    #serReStatementInfo;
 
     #serRe_Approved_By;
     #serRe_Responsable_Mechanic = []; //Array list [Object (mechanic)]
     #serRe_milage_at_Service;
     #serRe_Finished_Date;
-    #serRe_Labor_Cost;
+    #serRe_Labor_Info;
     #serRe_Material_List = []; //ArrayList [Object (material price)]
     #serRe_Other_List = []; //ArrayList [Object (material price)]
+    #serRe_Billing_History = []; //ArrayList [Object (Price, date, comments)]
 
-    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serReTotal, serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost, serRe_Material_List = [], serRe_Other_List = []) {
-        // constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal,serReTotal, serRe_Approved_By, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_Cost) {
-
+    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serReTotal, serReStatementStatus, serReStatementInfo = [], serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_info = [], serRe_Material_List = [], serRe_Other_List = [], serRe_Billing_History = []) {
         this.#serReId = serReId;
         this.#serReCar = serReCar;
         this.#serReName = serReName;
@@ -37,13 +39,18 @@ export default class ServiceRecord {
         this.#serReStatus = serReStatus;
         this.#serReInitialTotal = serReInitialTotal;
         this.#serReTotal = serReTotal;
+        // this.#serReTotalLeft = serReTotalLeft;
+        this.#serReStatementStatus = serReStatementStatus;
+        this.#serReStatementInfo = serReStatementInfo;
+
         this.#serRe_Approved_By = serRe_Approved_By;
         this.#serRe_Responsable_Mechanic = serRe_Responsable_Mechanic; //Object
         this.#serRe_milage_at_Service = serRe_milage_at_Service;
         this.#serRe_Finished_Date = serRe_Finished_Date;
-        this.#serRe_Labor_Cost = serRe_Labor_Cost;
-        this.#serRe_Material_List = serRe_Material_List;
-        this.#serRe_Other_List = serRe_Other_List;
+        this.#serRe_Labor_Info = serRe_Labor_info;
+        this.#serRe_Material_List = serRe_Material_List; //Object
+        this.#serRe_Other_List = serRe_Other_List; //Object
+        this.#serRe_Billing_History = serRe_Billing_History; //Object
     }
 
     //Setters
@@ -95,6 +102,14 @@ export default class ServiceRecord {
         this.#serReTotal = serReTotal;
     }
 
+    set setSerReStatementStatus(serReStatementStatus) {
+        this.#serReStatementStatus = serReStatementStatus;
+    }
+
+    set setSerReStatementInfo(serReStatementInfo) {
+        this.#serReStatementInfo = serReStatementInfo;
+    }
+
     set setSerReApprovedBy(serRe_Approved_By) {
         this.#serRe_Approved_By = serRe_Approved_By;
     }
@@ -111,8 +126,8 @@ export default class ServiceRecord {
         this.#serRe_Finished_Date = serRe_Finished_Date;
     }
 
-    set setSerReLaborCost(serRe_Labor_Cost) {
-        this.#serRe_Labor_Cost = serRe_Labor_Cost;
+    set setSerReLaborInfo(serRe_Labor_Cost) {
+        this.#serRe_Labor_Info = serRe_Labor_Cost;
     }
 
     set setSerReMaterialList(material) {
@@ -123,6 +138,9 @@ export default class ServiceRecord {
         this.#serRe_Other_List = serRe_Other_List;
     }
 
+    set setSerReBillingHistory(serRe_Billing_History) {
+        this.#serRe_Billing_History = serRe_Billing_History;
+    }
     //Getter
 
     get getSerReId() {
@@ -172,12 +190,23 @@ export default class ServiceRecord {
         return this.#serReTotal;
     }
 
+    get getSerReTotalLeft() {
+        return this.#serReTotalLeft;
+    }
+
+    get getSerReStatementStatus() {
+        return this.#serReStatementStatus;
+    }
+
+    get getSerReStatementInfo() {
+        return this.#serReStatementInfo;
+    }
+
     get getSerReApprovedBy() {
         return this.#serRe_Approved_By;
     }
 
     get getSerReResponsableMechanic() {
-        // console.log(typeof(this.#serRe_Responsable_Mechanic));
         return this.#serRe_Responsable_Mechanic;
     }
 
@@ -189,8 +218,8 @@ export default class ServiceRecord {
         return this.#serRe_Finished_Date;
     }
 
-    get getSerReLaborCost() {
-        return this.#serRe_Labor_Cost;
+    get getSerReLaborInfo() {
+        return this.#serRe_Labor_Info;
     }
 
     get getSerReMaterialList() {
@@ -201,42 +230,248 @@ export default class ServiceRecord {
         return this.#serRe_Other_List;
     }
 
+    get getSerReBillingHistory() {
+        return this.#serRe_Billing_History;
+    }
+
+
     //Methods
-    addMechanic(obj) {
-        this.#serRe_Responsable_Mechanic.push(obj);
-    }
-
-    removeMechanic(obj) {
-        if (this.#serRe_Responsable_Mechanic != 0) {
-            this.#serRe_Responsable_Mechanic.pop(obj);
+    updateMechanic(obj, flag) {
+        let mec = {
+            id: obj.getMecId,
+            name: obj.getMecName,
+        }
+        if (flag == 1) {
+            console.log(`Mechanic ${mec.name} with id ${mec.id} has been added`);
+            this.#serRe_Responsable_Mechanic.push(mec);
         } else {
-            console.log("There has to be a mechanic in charge!");
+            if (this.#serRe_Responsable_Mechanic.length > 1) {
+                console.log(`Mechanic ${mec.name} with id ${mec.id} has been removed`);
+                this.#serRe_Responsable_Mechanic.pop(obj);
+            } else {
+                console.log("There has to be a mechanic in charge!");
+            }
         }
     }
 
-    addNewMaterial(obj) {
-        if (!obj) {
-            console.log("There is no material to be added");
-        } else {
-            // console.log(obj.toJSON());
+    // addMechanic(obj) {
+    //     this.#serRe_Responsable_Mechanic.push(obj);
+    // }
+
+    // removeMechanic(obj) {
+    //     if (this.#serRe_Responsable_Mechanic.length != 0) {
+    //         this.#serRe_Responsable_Mechanic.pop(obj);
+    //     } else {
+    //         console.log("There has to be a mechanic in charge!");
+    //     }
+    // }
+
+    updateMaterial(obj, flag) {
+        let newObj = {
+            name: obj.getMatName,
+            quantity: obj.getMatQuantity,
+            cost: obj.getMatUnitCost,
+            laborCost: obj.getMatLaborCost,
+            comment: obj.getMatComment,
+            date: obj.getMatPurchaseDate,
+        }
+        if (flag == 1) {
+            console.log(`${newObj.name} has been added to the service`);
             this.#serRe_Material_List.push(obj);
-        }
-    }
-
-    removeMaterial(obj) {
-        if (this.#serRe_Material_List.length != 0) {
-            this.#serRe_Material_List.pop(obj);
         } else {
-            console.log("There is not material left");
+            if (this.#serRe_Material_List.length > 0) {
+                console.log(`${newObj.name} has been removed from the service`);
+                this.#serRe_Material_List = this.#serRe_Material_List.filter(mat => mat.name !== obj.name);
+            } else {
+                console.log("There is not material left");
+            }
+        }
+        this.updateLabor(newObj,flag);
+        this.getFinalTotal();
+        this.updateBillingHistory(newObj, flag);
+    }
+
+    updateOtherCost(obj, flag,) {
+        let newObj = {
+            name: obj.getMatName,
+            quantity: obj.getMatQuantity,
+            cost: obj.getMatUnitCost,
+            laborCost: obj.getMatLaborCost,
+            comment: obj.getMatComment,
+        }
+        if (flag == 1) {
+            console.log(`The extra service ${newObj.name} has been added to the service`);
+            this.#serRe_Other_List.push(obj);
+        } else {
+            if (this.#serRe_Other_List.length > 0) {
+                console.log(`The extra service ${newObj.name} has been removed from the service`);
+                this.#serRe_Other_List = this.#serRe_Other_List.filter(mat => mat.name !== obj.name);
+            } else {
+                console.log("There is not extra cost left");
+            }
+        }
+        this.updateLabor(newObj,flag);
+        this.getFinalTotal();
+        this.updateBillingHistory(newObj, flag);
+    }
+
+    updateLabor(obj, flag) {
+        console.log(`Update labor: `);
+        console.log(obj.laborCost);
+        if (flag == 1) {
+            // console.log(`The labor cost  is ${obj.laborCost} and has been added`);
+            this.#serRe_Labor_Info.push(obj);
+        } else {
+            if (this.#serRe_Labor_Info.length > 0) {
+                console.log(`The labor cost ${obj.laborCost} and has been removed`);
+                this.#serRe_Labor_Info = this.#serRe_Labor_Info.filter(job => job.name !== obj.name);
+            } else {
+                console.log("There is not extra cost left");
+            }
+        }
+    };
+
+    takePayment(obj){
+        
+    }
+    updateDownPayment(obj, flag) {
+        this.#serReTotalLeft = this.#serReTotalLeft - obj.amount;
+        let st = {
+            date: obj.date,
+            amount: obj.amount,
+            amountTotal: this.#serReTotal,
+            amountLeft: this.#serReTotalLeft,
+        }
+        if (flag == 1) {
+            console.log(`Amount Received: ${obj.amount} on ${obj.date} has been added`);
+            this.#serReStatementInfo.push(st);
+        } else {
+            if (this.#serReStatementInfo.length > 0) {
+                console.log(`Amount Received: ${obj.amount} on ${obj.date} has been removed`);
+                this.#serReStatementInfo = this.#serReStatementInfo.filter(payment => payment.amount !== obj.amount);
+            } else {
+                console.log("There is not extra cost left");
+            }
+        }
+        // if () {
+
+        // }
+    };
+
+    // addNewMaterial(obj) {
+    //     if (!obj) {
+    //         console.log("There is no material to be added");
+    //     } else {
+    //         const flag = 1;
+    //         let newObj = {
+    //             name: obj.getMatName,
+    //             quantity: obj.getMatQuantity,
+    //             cost: obj.getMatUnitCost,
+    //         }
+    //         // console.log(obj.toJSON());
+    //         console.log(`${newObj.name} has been added to the service`);
+    //         this.#serRe_Material_List.push(obj);
+
+    //         this.updateTotal(newObj, flag); //1 for adding a material
+    //         this.updateBillingHistory(newObj, flag);
+    //     }
+    // }
+
+    // removeMaterial(obj) {
+    //     const flag = -1; //-1 for removing a material
+    //     let newObj = {
+    //         name: obj.getMatName,
+    //         quantity: obj.getMatQuantity,
+    //         cost: obj.getMatUnitCost,
+    //     }
+    //     if (this.#serRe_Material_List.length != 0) {
+    //         console.log(`${newObj.name} has been removed from the service`);
+    //         this.#serRe_Material_List.pop(obj);
+    //         this.updateTotal(newObj, flag); //0 for removing a material
+    //         this.updateBillingHistory(newObj, flag);
+    //     } else {
+    //         console.log("There is not material left");
+    //     }
+    // }
+
+    updateMaterialTotal() {
+        let prevTotal = 0;
+        this.#serRe_Material_List.forEach(obj => {
+            prevTotal = prevTotal + (obj.getMatQuantity * obj.getMatUnitCost);
+        });
+        return prevTotal;
+    }
+
+    getMaterialTotal() {
+        let prevMatTotal = 0, prevMatLaborTotal = 0;
+        this.#serRe_Material_List.forEach(mat => {
+            // console.log(mat.getMatQuantity, mat.getMatUnitCost,mat.getMatQuantity * mat.getMatUnitCost);
+            prevMatTotal += mat.getMatQuantity * mat.getMatUnitCost;
+            prevMatLaborTotal += mat.getMatLaborCost;
+        });
+        let subTotal = prevMatTotal + prevMatLaborTotal;
+        // console.log(prevLaborTotal);
+        return {
+            matSubTotal: prevMatTotal,
+            matLabTotal: prevMatLaborTotal,
+            matTotal: subTotal,
+        };
+    }
+
+    getLaborTotal() {
+        let materialTotal = this.getMaterialTotal().matLabTotal,
+            otherTotal = this.getOtherCostTotal().otherLabTotal,
+            subTotal = materialTotal + otherTotal;
+        return {
+            matSubTotal: materialTotal,
+            otherSubTotal: otherTotal,
+            laborTotal: subTotal
+        };
+    }
+
+    getOtherCostTotal() {
+        let prevOtherTotal = 0, prevOtherLabTotal = 0;
+        this.#serRe_Other_List.forEach(mat => {
+            // console.log(mat.toJSON());
+            // console.log(mat.getMatQuantity, mat.getMatUnitCost,mat.getMatQuantity * mat.getMatUnitCost);
+            prevOtherTotal += mat.getMatQuantity * mat.getMatUnitCost;
+            prevOtherLabTotal += mat.getMatLaborCost;
+        });
+        let subTotal = prevOtherTotal + prevOtherLabTotal;
+        // console.log(subTotal);
+        return {
+            otherSubTotal: prevOtherTotal,
+            otherLabTotal: prevOtherLabTotal,
+            otherTotal: subTotal
+        };
+    }
+
+    getPaymentTotal(){
+        let prevPaymentTotal = 0;
+        this.#serReStatementInfo.forEach(st => {
+            // console.log(st.amount);
+            prevPaymentTotal += st.amount;
+        });
+        this.#serReTotalLeft = this.#serReTotal - prevPaymentTotal
+        // console.log(prevPaymentTotal);
+        return {
+            paymentTotal: prevPaymentTotal,
+            leftTotal: this.#serReTotalLeft,
         }
     }
 
-    getMaterialTotal(){
-        
-        this.#serRe_Material_List.forEach(obj => {
-            console.log(obj.getMatQuantity, obj.getMatUnitCost, obj.getMatQuantity *  obj.getMatUnitCost );
-            this.total
-        })
+    getFinalTotal() {
+        let material = this.getMaterialTotal().matTotal,
+            other = this.getOtherCostTotal().otherTotal;
+        let subTotal = material + other;
+        this.#serReTotal = subTotal;
+        this.#serReTotalLeft = this.#serReTotal;
+        return {
+            matTotal: material,
+            laborTotal: other,
+            total: subTotal,
+            leftTotal: this.#serReTotal - this.#serReTotalLeft,
+        }
     }
 
     showMechanicList() {
@@ -247,6 +482,29 @@ export default class ServiceRecord {
         this.#serRe_Material_List.forEach(mat => console.log(mat.toJSON()));
     }
 
+    showBillingHistory() {
+        this.#serRe_Billing_History.forEach(bill => console.log(bill.toJSON()));
+    }
+
+    // updateTotal(obj, flag) {
+    //     let total = flag * obj.quantity * obj.cost;
+    //     console.log(obj.name, total);
+    //     console.log(`Total Before: ${this.#serReTotal}`);
+    //     console.log(`SubTotal: ${total}`);
+    //     this.#serReTotal += total;
+    //     console.log(`Total: ${this.#serReTotal}`);
+
+    // }
+
+    updateBillingHistory(obj, flag) {
+        if (flag == 1) {
+            console.log(`Adding ${obj.name} to the history`);
+            this.#serRe_Billing_History.push(obj);
+        } else {
+            console.log(`Removing ${obj.name} from the history`)
+            this.#serRe_Billing_History = this.#serRe_Billing_History.filter(item => item.name !== obj.name);
+        }
+    }
     toJSON() {
         return {
             serReId: this.getSerReId,
@@ -261,13 +519,17 @@ export default class ServiceRecord {
             serReStatus: this.getSerReStatus,
             serReInitialTotal: this.getSerReInitialTotal,
             serReTotal: this.getSerReTotal,
+            serReTotalLeft: this.getSerReTotalLeft,
+            serReStatementStatus: this.getSerReStatementStatus,
+            serReStatementInfo: this.getSerReStatementInfo,
             serRe_Approved_By: this.getSerReApprovedBy,
             serRe_Responsable_Mechanic: this.getSerReResponsableMechanic,
             serRe_milage_at_Service: this.getSerReMilageAtService,
             serRe_Finished_Date: this.getSerReFinishedDate,
-            serRe_Labor_Cost: this.getSerReLaborCost,
+            serRe_Labor_Info: this.getSerReLaborInfo,
             serRe_Material_List: this.getSerReMaterialList,
             serRe_Other_List: this.getSerReOtherList,
+            serRe_Billing_History: this.getSerReBillingHistory,
         }
     }
 
@@ -286,13 +548,16 @@ export default class ServiceRecord {
             obj.status,
             obj.initialTotal,
             obj.total,
+            obj.statementStatus,
+            obj.statementInfo,
             obj._Approved_By,
             obj._Responsable_Mechanic,
             obj._milage_at_Service,
             obj._Finished_Date,
             obj._Labor_Cost,
             obj._Material_List, //ArrayList [Object (material)]
-            obj._Other_List,
+            obj._Other_List, //ArrayList [Object ()]
+            obj._Billing_History, //ArrayList [Object ()]
         );
     }
 
