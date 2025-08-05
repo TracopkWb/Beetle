@@ -12,18 +12,17 @@ export default class Car {
     #carVin; //Optional
     #carCurrMilage;
     //Shop Required Info
-    #carOwner;
+    #carOwner; //ownerId => cosId (DB)
     #car_Registration_Date;
-    #car_Last_Service;
-    #car_Last_Service_Date;
+    #car_prev_Services_Info = [];
     #car_Photo;
     #car_Entrance_Date;
     #car_Exit_Date;
     #car_Status;
-    #car_Billing;
+    #car_Billing_Info = [];
 
 
-    constructor(carId, carManufacturer, carModel, carYear, carVersion, carLicensePlate, carVin, carCurrMilage, carOwner, car_Registration_Date, car_Last_Service, car_Last_Service_Date, car_Photo, car_Entrance_Date, car_Exit_Date, car_Status, car_Billing) {
+    constructor(carId, carManufacturer, carModel, carYear, carVersion, carLicensePlate, carVin, carCurrMilage, carOwner, car_Registration_Date, car_prev_Services_Info = [], car_Photo, car_Entrance_Date, car_Exit_Date, car_Status, car_Billing_Info = []) {
         this.#carId = carId;
         this.#carManufacturer = carManufacturer;
         this.#carModel = carModel;
@@ -34,17 +33,16 @@ export default class Car {
         this.#carCurrMilage = carCurrMilage;
         this.#carOwner = carOwner;
         this.#car_Registration_Date = car_Registration_Date;
-        this.#car_Last_Service = car_Last_Service;
-        this.#car_Last_Service_Date = car_Last_Service_Date;
+        this.#car_prev_Services_Info = car_prev_Services_Info;
         this.#car_Photo = car_Photo;
         this.#car_Entrance_Date = car_Entrance_Date;
         this.#car_Exit_Date = car_Exit_Date;
         this.#car_Status = car_Status;
-        this.#car_Billing = car_Billing;
+        this.#car_Billing_Info = car_Billing_Info;
     }
 
     //Setters
-    set setCarId(car) {
+    set setCarId(carId) {
         this.#carId = carId;
     }
 
@@ -84,13 +82,10 @@ export default class Car {
         this.#car_Registration_Date = car_Registration_Date;
     }
 
-    set setCarLastService(car_Last_Service) {
-        this.#car_Last_Service = car_Last_Service;
+    set setCarPrevServiceInfo(car_prev_Services_Info) {
+        this.#car_prev_Services_Info = car_prev_Services_Info;
     }
 
-    set setCarLastServiceDate(car_Last_Service_Date) {
-        this.#car_Last_Service_Date = car_Last_Service_Date;
-    }
 
     set setCarPhoto(car_Photo) {
         this.#car_Photo = car_Photo;
@@ -108,8 +103,8 @@ export default class Car {
         this.#car_Status = car_Status;
     }
 
-    set setCarBilling(car_Billing) {
-        this.#car_Billing = car_Billing;
+    set setCarBilling(car_Billing_Info) {
+        this.#car_Billing_Info = car_Billing_Info;
     }
 
     //Getters
@@ -154,12 +149,8 @@ export default class Car {
         return this.#car_Registration_Date;
     }
 
-    get getCarLastService() {
-        return this.#car_Last_Service;
-    }
-
-    get getCarLastServiceDate() {
-        return this.#car_Last_Service_Date;
+    get getCarPrevServiceInfo() {
+        return this.#car_prev_Services_Info;
     }
 
     get getCarPhoto() {
@@ -178,11 +169,33 @@ export default class Car {
         return this.#car_Status;
     }
 
-    get getCarBilling() {
-        return this.#car_Billing;
+    get getCarBillingInfo() {
+        return this.#car_Billing_Info;
     }
 
     //Methods
+
+    updateService(service, flag){
+        if (flag == 1) {
+            console.log(`Service ${service.getSerReName} added to  History`);
+            console.log(service.getPaymentTotal());
+            this.#car_Billing_Info.push(service);
+            this.#car_prev_Services_Info.push(service);
+            
+        } else {
+            console.log(`Service ${service.getSerReName} removed from  History`);
+            this.#car_prev_Services_Info.filter(ser => ser.id !== service.id);
+            this.#car_Billing_Info.filter(ser=> ser.id !== service.id);
+        }
+    }
+
+    showServiceResume(){
+        this.#car_prev_Services_Info.forEach(ser =>{
+            console.log(ser);
+            // return ser;
+        });
+
+    }
 
     toJSON() {
         return {
@@ -196,13 +209,12 @@ export default class Car {
             carCurrMilage: this.getCarCurrMilage ,
             carOwner: this.getCarOwner ,
             car_Registration_Date: this.getCarRegistrationDate ,
-            car_Last_Service: this.getCarLastService ,
-            car_Last_Service_Date: this.getCarLastServiceDate ,
+            car_prev_Service_Info: this.getCarPrevServiceInfo ,
             car_Photo: this.getCarPhoto,
             car_Entrance_Date: this.getCarEntranceDate ,
             car_Exit_Date: this.getCarExitDate ,
             car_Status: this.getCarStatus ,
-            car_Billing: this.getCarBilling ,
+            car_Billing_Info: this.getCarBillingInfo ,
         }
     }
 
@@ -220,13 +232,12 @@ export default class Car {
             obj.milage,
             obj.owner,
             obj.registrationDate,
-            obj.lastService,
-            obj.lastServiceDate,
+            obj.prevServiceInfo,
             obj.photo,
             obj.entranceDate,
             obj.exitDate,
             obj.status,
-            obj.billing,
+            obj.billingInfo,
         );
     }
 

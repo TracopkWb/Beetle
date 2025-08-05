@@ -1,8 +1,10 @@
+import Ticket from './Ticket.js';
+
 export default class ServiceRecord {
     //Attributes
 
     #serReId;
-    #serReCar;
+    #serReCar; //Foreign Key from carId
     #serReName;
     #serReDate;
     #serReDescription;
@@ -15,18 +17,23 @@ export default class ServiceRecord {
     #serReTotal;
     #serReTotalLeft;
     #serReStatementStatus //Paid, pending
-    #serReStatementInfo;
-
+    
     #serRe_Approved_By;
-    #serRe_Responsable_Mechanic = []; //Array list [Object (mechanic)]
+    #serRe_Responsable_Mechanic = []; //Array list [Object (mechanic)]  ServiceMechanics (many-to-many relationship)
     #serRe_milage_at_Service;
     #serRe_Finished_Date;
-    #serRe_Labor_Info;
+
+    ///ServiceMaterial (many-to-many)
+    #serRe_Labor_Info = [];
     #serRe_Material_List = []; //ArrayList [Object (material price)]
     #serRe_Other_List = []; //ArrayList [Object (material price)]
     #serRe_Billing_History = []; //ArrayList [Object (Price, date, comments)]
+    
+    ////Ticket Table
+    #serReStatementInfo = []; // tic_Id
+    #ticket;
 
-    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serReTotal, serReStatementStatus, serReStatementInfo = [], serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_info = [], serRe_Material_List = [], serRe_Other_List = [], serRe_Billing_History = []) {
+    constructor(serReId, serReCar, serReName, serReDate, serReDescription, serReComments, serReWarranty, serReStatusWarranty, serReDownPayment, serReStatus, serReInitialTotal, serReTotal, serReStatementStatus, serReStatementInfo = [], serRe_Approved_By, serRe_Responsable_Mechanic, serRe_milage_at_Service, serRe_Finished_Date, serRe_Labor_info = [], serRe_Material_List = [], serRe_Other_List = [], serRe_Billing_History = [],ticket = '') {
         this.#serReId = serReId;
         this.#serReCar = serReCar;
         this.#serReName = serReName;
@@ -51,6 +58,7 @@ export default class ServiceRecord {
         this.#serRe_Material_List = serRe_Material_List; //Object
         this.#serRe_Other_List = serRe_Other_List; //Object
         this.#serRe_Billing_History = serRe_Billing_History; //Object
+        this.#ticket = ticket;
     }
 
     //Setters
@@ -141,6 +149,11 @@ export default class ServiceRecord {
     set setSerReBillingHistory(serRe_Billing_History) {
         this.#serRe_Billing_History = serRe_Billing_History;
     }
+
+    set setTicket(ticket){
+        this.#ticket = ticket;
+    }
+
     //Getter
 
     get getSerReId() {
@@ -234,6 +247,9 @@ export default class ServiceRecord {
         return this.#serRe_Billing_History;
     }
 
+    get getTicket(){
+        return this.#ticket;
+    }
 
     //Methods
     updateMechanic(obj, flag) {
@@ -286,7 +302,7 @@ export default class ServiceRecord {
                 console.log("There is not material left");
             }
         }
-        this.updateLabor(newObj,flag);
+        this.updateLabor(newObj, flag);
         this.getFinalTotal();
         this.updateBillingHistory(newObj, flag);
     }
@@ -310,7 +326,7 @@ export default class ServiceRecord {
                 console.log("There is not extra cost left");
             }
         }
-        this.updateLabor(newObj,flag);
+        this.updateLabor(newObj, flag);
         this.getFinalTotal();
         this.updateBillingHistory(newObj, flag);
     }
@@ -331,9 +347,6 @@ export default class ServiceRecord {
         }
     };
 
-    takePayment(obj){
-        
-    }
     updateDownPayment(obj, flag) {
         this.#serReTotalLeft = this.#serReTotalLeft - obj.amount;
         let st = {
@@ -345,6 +358,9 @@ export default class ServiceRecord {
         if (flag == 1) {
             console.log(`Amount Received: ${obj.amount} on ${obj.date} has been added`);
             this.#serReStatementInfo.push(st);
+            if (this.#serReTotalLeft== 0) {
+                this.setSerReStatementStatus = 'Paid';
+            }
         } else {
             if (this.#serReStatementInfo.length > 0) {
                 console.log(`Amount Received: ${obj.amount} on ${obj.date} has been removed`);
@@ -353,9 +369,7 @@ export default class ServiceRecord {
                 console.log("There is not extra cost left");
             }
         }
-        // if () {
 
-        // }
     };
 
     // addNewMaterial(obj) {
@@ -446,7 +460,7 @@ export default class ServiceRecord {
         };
     }
 
-    getPaymentTotal(){
+    getPaymentTotal() {
         let prevPaymentTotal = 0;
         this.#serReStatementInfo.forEach(st => {
             // console.log(st.amount);
@@ -455,8 +469,12 @@ export default class ServiceRecord {
         this.#serReTotalLeft = this.#serReTotal - prevPaymentTotal
         // console.log(prevPaymentTotal);
         return {
-            paymentTotal: prevPaymentTotal,
-            leftTotal: this.#serReTotalLeft,
+            serId: this.getSerReId,
+            serName: this.getSerReName, 
+            serStatus: this.getSerReStatementStatus,
+            serTotal: this.getSerReTotal,
+            totalPayment: prevPaymentTotal,
+            totalLeft: this.getSerReTotalLeft,
         }
     }
 
@@ -505,6 +523,19 @@ export default class ServiceRecord {
             this.#serRe_Billing_History = this.#serRe_Billing_History.filter(item => item.name !== obj.name);
         }
     }
+
+    generateTicket(ser){
+        const ticketIdFormatted = ser.getSerReId.toString().concat('-tic');
+        const formattedDate = new Date().toLocaleDateString();
+        console.log("ID:"+ser.getSerReId.toString().concat('-tic'));
+        return new Ticket(
+            ticketIdFormatted,
+            ser,
+            formattedDate,
+            ser.getSerReTotal
+        );
+    }
+
     toJSON() {
         return {
             serReId: this.getSerReId,
@@ -530,6 +561,7 @@ export default class ServiceRecord {
             serRe_Material_List: this.getSerReMaterialList,
             serRe_Other_List: this.getSerReOtherList,
             serRe_Billing_History: this.getSerReBillingHistory,
+            serRe_Ticket: this.getTicket,
         }
     }
 
@@ -549,12 +581,12 @@ export default class ServiceRecord {
             obj.initialTotal,
             obj.total,
             obj.statementStatus,
-            obj.statementInfo,
+            obj.statementInfo, //ArrayList [Object (material)]
             obj._Approved_By,
-            obj._Responsable_Mechanic,
+            obj._Responsable_Mechanic, //ArrayList [Object (material)]
             obj._milage_at_Service,
             obj._Finished_Date,
-            obj._Labor_Cost,
+            obj._Labor_Info, //ArrayList [Object (material)]
             obj._Material_List, //ArrayList [Object (material)]
             obj._Other_List, //ArrayList [Object ()]
             obj._Billing_History, //ArrayList [Object ()]
