@@ -11,9 +11,6 @@ const pool = mysql2.createPool({
     database: process.env.DB_NAME
 });
 
-const tableCreation = async function connect2DB(){
-
-};
 
 const test = async function testDBConnection() {
     try {
@@ -27,5 +24,4 @@ const test = async function testDBConnection() {
 export default {
     conn: pool,
     testConnection :test,
-    table : tableCreation
 };

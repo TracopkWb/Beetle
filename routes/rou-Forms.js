@@ -14,8 +14,9 @@ router.use(express.json({limit:"50mb"}));
 //Variables Section
 
 
-//Url = localhost:3000/Form/Costumer/registration
+//Url = http://localhost:3000/Forms/Costumer/Registration
 router.get("/Costumer/Registration",costumerFile.registration);
+router.post("/Costumer/Data",costumerFile.receivingData);
 router.get("/Car/Registration",carFile.registration);
 
 router.get('/', (req, res, next) => {
