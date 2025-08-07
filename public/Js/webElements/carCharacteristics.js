@@ -1,3 +1,4 @@
+
 class carModel extends HTMLElement {
     constructor() {
         super();
@@ -35,9 +36,9 @@ class carModel extends HTMLElement {
         const dataRaw = await fetch('/Forms/Car/sendData', {
             method: 'Get'
         });
-        const dataObj = await dataRaw.json();
-        // console.log(dataObj.data);
-
+        const dataRawObj = await dataRaw.json();
+        const fixedData = await this.fixJson(dataRawObj.data[0]);
+        // console.log(fixedData);
         // Create container elements
         const container = document.createElement('div');
 
@@ -45,13 +46,17 @@ class carModel extends HTMLElement {
         const manufacturerLabel = document.createElement('label');
         const manufacturerSelect = document.createElement('select');
         const nullManufacturerOpt = document.createElement('option');
+        const otherManufacturerOpt = document.createElement('option');
 
         manufacturerLabel.setAttribute('for', 'manufacturer');
         manufacturerLabel.textContent = 'Manufacturer:';
         manufacturerSelect.dataset.manufacturerSelection = '';
         nullManufacturerOpt.value = '';
         nullManufacturerOpt.text = 'Select a manufacturer';
+        otherManufacturerOpt.value = 'Other';
+        otherManufacturerOpt.textContent = '-----Other------';
         manufacturerSelect.appendChild(nullManufacturerOpt);
+        manufacturerSelect.appendChild(otherManufacturerOpt);
 
         // Model
         const modelLabel = document.createElement('label');
@@ -68,13 +73,14 @@ class carModel extends HTMLElement {
         // Send Button
 
         const sendButton = document.createElement('button');
-        sendButton.textContent= 'Send';
+        sendButton.textContent = 'Send';
 
-        // Fill manufacturer options
-        Object.entries(dataObj.data).forEach(([manufacturer]) => {
+
+        Object.entries(fixedData).forEach(datum => {
+            // console.log(datum);
             const opt = document.createElement('option');
-            opt.value = manufacturer;
-            opt.textContent = manufacturer;
+            opt.value = datum[0];
+            opt.textContent = datum[0];
             manufacturerSelect.appendChild(opt);
         });
 
@@ -94,32 +100,36 @@ class carModel extends HTMLElement {
             console.log(selectedMan);
             // Clear old options (but keep first)
             modelSelect.length = 1;
-            const models = dataObj.data[selectedMan];
+            const models = fixedData[selectedMan];
+            console.log((models));
             if (selectedMan !== 'Other') {
                 if (models) {
-                    Object.values(models).forEach(modelName => {
+                    console.log(1)
+                    Object.values(models).forEach((carName) => {
+                        console.log(carName);
                         const opt = document.createElement('option');
-                        opt.value = modelName;
-                        opt.textContent = modelName;
+                        opt.value = carName;
+                        opt.textContent = carName;
                         modelSelect.appendChild(opt);
                     });
                 }
             } else {
+                console.log(2);
                 //Personalized input for a new Manufacturer
                 const manInput = document.createElement('input');
-                manInput.type='text';
+                manInput.type = 'text';
                 manInput.name = 'newMan';
-                manInput.placeholder= 'Insert New Manufacturer';
-                
+                manInput.placeholder = 'Insert New Manufacturer';
+
                 //Personalized input for new car model
-                modelSelect.remove();
+                // modelSelect.remove();
                 // modelLabel.remove();
                 const modelInput = document.createElement('input');
-                
-                modelInput.type='text';
+
+                modelInput.type = 'text';
                 modelInput.name = 'newModel';
-                modelInput.placeholder= 'Insert New model';
-                
+                modelInput.placeholder = 'Insert New model';
+
                 //Appending new inputs
                 container.appendChild(manInput);
                 container.appendChild(modelInput);
@@ -129,23 +139,35 @@ class carModel extends HTMLElement {
 
         });
 
-        sendButton.addEventListener('click',async (e)=>{
-           console.log(manufacturerSelect.value);
-           if (manufacturerSelect.value == 'Other') {
-            const newMode = {
-                
-            }
-                const addNewData = fetch('/Forms/Car/newMode',{
-                    method: 'POST',
-                    body: 
-                })
-           } else {
-            
-           }
-        })
+        // sendButton.addEventListener('click',async (e)=>{
+        //    console.log(manufacturerSelect.value);
+        //    if (manufacturerSelect.value == 'Other') {
+        //     const newMode = {
+
+        //     }
+        //         const addNewData = fetch('/Forms/Car/newMode',{
+        //             method: 'POST',
+        //             body: 
+        //         })
+        //    } else {
+
+        //    }
+        // })
     }
 
-    async sendCarInfo(){
+    async fixJson(data) {
+        const fixedJson = [];
+        Object.entries(data).forEach(([_, value]) => {
+            const rawObj = JSON.parse(value.result);
+            // console.log(rawObj.manufacturer, rawObj.models)
+            const id = rawObj.manufacturer.toString();
+            fixedJson[id] = rawObj.models;
+        });
+        // console.log((fixedJson));
+        return fixedJson;
+    }
+
+    async sendCarInfo() {
 
     }
 }

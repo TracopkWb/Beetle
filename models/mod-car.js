@@ -2,6 +2,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs/promises';
+import DB from "../utilities/uti-db.js";
 
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
@@ -21,19 +22,22 @@ const addCar = (req, res) => {
 }
 
 const sendCarModel = async (req, res) => {
-    const carData = await readCarFile(carModels);
+    const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id`;
+
+    const carData = await DB.conn.execute(fetchCarJson);
+    console.log(carData);
     try {
         res.status(200).json({
             success: true,
             error: null,
-            data: carData.data
+            data: carData
         });
     } catch (error) {
         //status 204 Server successfully processes the request but has no content to return in the response body.
         res.status(204).json({
             success: false,
             error: null,
-            data: carData.data
+            data: carData
         })
     }
 }
