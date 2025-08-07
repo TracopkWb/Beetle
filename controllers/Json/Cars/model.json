@@ -121,5 +121,6 @@
   "Maserati": ["Ghibli", "Levante", "Quattroporte", "MC20"],
   "LandRover": ["Range Rover", "Discovery", "Defender", "Evoque"],
   "Jaguar": ["XE", "XF", "F-Type", "F-Pace", "I-Pace"],
-  "Volvo": ["S60", "S90", "XC40", "XC60", "XC90", "V60", "V90", "EX30", "EX90"]
+  "Volvo": ["S60", "S90", "XC40", "XC60", "XC90", "V60", "V90", "EX30", "EX90"],
+  "Other": []
 }

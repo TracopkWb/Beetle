@@ -36,31 +36,181 @@ class carModel extends HTMLElement {
             method: 'Get'
         });
         const dataObj = await dataRaw.json();
-        console.log(typeof (dataObj));
-        const select = document.createElement('select'),
-            nullOpt = document.createElement('option');
-        nullOpt.value = "null",
-            // nullOpt.setAttribute('disabled','');
-        nullOpt.textContent = "Select a car model";
-        select.appendChild(nullOpt);
-        Object.entries(dataObj.data).forEach(man => {
-            const optGroup = document.createElement('optgroup');
-            optGroup.setAttribute('label', man[0])
-            console.log(optGroup);
-            Object.entries(man[1]).forEach(model => {
-                const optionTag = document.createElement('option');
-                optionTag.value = model[1];
-                optionTag.textContent = model[1];
-                // console.log(optionTag);
-                optGroup.appendChild(optionTag);
-            });
-            select.appendChild(optGroup);
+        // console.log(dataObj.data);
+
+        // Create container elements
+        const container = document.createElement('div');
+
+        // Manufacturer
+        const manufacturerLabel = document.createElement('label');
+        const manufacturerSelect = document.createElement('select');
+        const nullManufacturerOpt = document.createElement('option');
+
+        manufacturerLabel.setAttribute('for', 'manufacturer');
+        manufacturerLabel.textContent = 'Manufacturer:';
+        manufacturerSelect.dataset.manufacturerSelection = '';
+        nullManufacturerOpt.value = '';
+        nullManufacturerOpt.text = 'Select a manufacturer';
+        manufacturerSelect.appendChild(nullManufacturerOpt);
+
+        // Model
+        const modelLabel = document.createElement('label');
+        const modelSelect = document.createElement('select');
+        const nullModelOpt = document.createElement('option');
+
+        modelLabel.setAttribute('for', 'model');
+        modelLabel.textContent = 'Model:';
+        modelSelect.dataset.modelSelection = '';
+        nullModelOpt.value = '';
+        nullModelOpt.text = 'Select a car model';
+        modelSelect.appendChild(nullModelOpt);
+
+        // Send Button
+
+        const sendButton = document.createElement('button');
+        sendButton.textContent= 'Send';
+
+        // Fill manufacturer options
+        Object.entries(dataObj.data).forEach(([manufacturer]) => {
+            const opt = document.createElement('option');
+            opt.value = manufacturer;
+            opt.textContent = manufacturer;
+            manufacturerSelect.appendChild(opt);
         });
-        this.shadowRoot.appendChild(select);
+
+        // Append once, in proper order
+        container.appendChild(manufacturerLabel);
+        container.appendChild(manufacturerSelect);
+        container.appendChild(document.createElement('br'));
+        container.appendChild(modelLabel);
+        container.appendChild(modelSelect);
+        container.appendChild(sendButton);
+
+        this.shadowRoot.appendChild(container);
+
+        // Populating the Manufacturer and Model Selection
+        manufacturerSelect.addEventListener('change', (e) => {
+            const selectedMan = e.target.value;
+            console.log(selectedMan);
+            // Clear old options (but keep first)
+            modelSelect.length = 1;
+            const models = dataObj.data[selectedMan];
+            if (selectedMan !== 'Other') {
+                if (models) {
+                    Object.values(models).forEach(modelName => {
+                        const opt = document.createElement('option');
+                        opt.value = modelName;
+                        opt.textContent = modelName;
+                        modelSelect.appendChild(opt);
+                    });
+                }
+            } else {
+                //Personalized input for a new Manufacturer
+                const manInput = document.createElement('input');
+                manInput.type='text';
+                manInput.name = 'newMan';
+                manInput.placeholder= 'Insert New Manufacturer';
+                
+                //Personalized input for new car model
+                modelSelect.remove();
+                // modelLabel.remove();
+                const modelInput = document.createElement('input');
+                
+                modelInput.type='text';
+                modelInput.name = 'newModel';
+                modelInput.placeholder= 'Insert New model';
+                
+                //Appending new inputs
+                container.appendChild(manInput);
+                container.appendChild(modelInput);
+
+
+            }
+
+        });
+
+        sendButton.addEventListener('click',async (e)=>{
+           console.log(manufacturerSelect.value);
+           if (manufacturerSelect.value == 'Other') {
+            const newMode = {
+                
+            }
+                const addNewData = fetch('/Forms/Car/newMode',{
+                    method: 'POST',
+                    body: 
+                })
+           } else {
+            
+           }
+        })
     }
 
+    async sendCarInfo(){
+
+    }
 }
 
 customElements.define('car-model-card', carModel);
 
+
+/**const modelSelect = document.createElement('select'),
+            nullModelOpt = document.createElement('option'),
+            manufacturerLabel = document.createElement('label'),
+            manufacturerSelect = document.createElement('select'),
+            modelLabel = document.createElement('label'),
+            nullManufacturerOpt = document.createElement('option'),
+            brTag = document.createElement('br')
+            ;
+        modelSelect.dataset.modelSelection = '',
+            manufacturerSelect.dataset.manufacturerSelection = '',
+            nullModelOpt.value = "",
+            nullModelOpt.textContent = "Select a car model",
+            nullManufacturerOpt.value = "",
+            nullManufacturerOpt.text = 'Select a manufacturer',
+            // nullManufacturerOpt.setAttribute('disabled','');
+
+            manufacturerLabel.setAttribute('for', 'Manufacturer'),
+            manufacturerLabel.textContent = 'Manufacturer:',
+            modelLabel.setAttribute('for', 'Model'),
+            modelLabel.textContent = 'Model:'
+            ;
+
+            manufacturerSelect.appendChild(nullManufacturerOpt),
+            modelSelect.appendChild(nullModelOpt),
+            this.shadowRoot.append(manufacturerLabel,manufacturerSelect),
+            this.shadowRoot.append(modelLabel,modelSelect),
+            // modelSelect.appendChild(nullModelOpt);
+
+            Object.entries(dataObj.data).forEach(man => {
+                const optSelection = document.createElement('option');
+                optSelection.setAttribute('value', man[0]);
+                optSelection.textContent = man[0];
+                // console.log(man[0],optSelection);
+                manufacturerSelect.appendChild(optSelection);
+            });
+
+        this.shadowRoot.appendChild(manufacturerSelect);
+
+        const manufacturerSelection = this.shadowRoot.querySelector('[data-manufacturer-selection]');
+        console.log(manufacturerSelection);
+
+        manufacturerSelection.addEventListener('change', (e) => {
+            const model = e.target.options[e.target.selectedIndex].label;
+            // console.log(model);
+
+            Object.entries(dataObj.data).forEach(mod => {
+                // console.log(mod);
+                if (model === mod[0]) {
+
+                    Object.entries(mod[1]).forEach(modOpt =>{
+                        console.log(modOpt[1]);
+                        const optSelection = document.createElement('option');
+                        optSelection.setAttribute('value', modOpt[1]);
+                        optSelection.textContent = modOpt[1];
+                        modelSelect.appendChild(optSelection);
+                    });
+                }
+            });
+
+            this.shadowRoot.appendChild(modelSelect); */
 
