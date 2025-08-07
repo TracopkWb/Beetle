@@ -20,11 +20,26 @@
 
   <body>
     <h1>Car Registration Form</h1>
-    <form>
-      <label for="fname">First name:</label><br />
+    <form data-car-form>
+      <label for="fname">Model:</label><br />
+      <car-model-card></car-model-card><br />
+      <label for="fname">Year:</label><br />
+      <input type="text" id="fname" value="John" required /><br />
+      <label for="fname">Manufacturer:</label><br />
+      <input type="text" id="fname" value="John" required /><br />
+      <label for="fname">License Plate:</label><br />
+      <input type="text" id="fname" value="John" required /><br />
+      <label for="fname">VIN number:</label><br />
       <input type="text" id="fname" value="John" /><br />
-      <input type="submit" value="Submit" />
+      <label for="fname">Current Milage:</label><br />
+      <input type="text" id="fname" value="John" /><br />
+      <label for="fname">Owner:</label><br />
+      <input type="text" id="fname" value="John" required /><br />
+      <label for="fname">Photo:</label><br />
+      <input type="text" id="fname" /><br />
+      <input type="button" value="Save Car" />
     </form>
   </body>
   <script type="text/javascript" src="/Js/carForm.js"></script>
+  <script type="module" src="/Js/webElements/carCharacteristics.js"></script>
 </html>

@@ -18,6 +18,7 @@ router.use(express.json({limit:"50mb"}));
 router.get("/Costumer/Registration",costumerFile.registration);
 router.post("/Costumer/Data",costumerFile.receivingData);
 router.get("/Car/Registration",carFile.registration);
+router.get("/Car/sendData",carFile.sendData);
 
 router.get('/', (req, res, next) => {
     console.log(req.url);
