@@ -21,7 +21,19 @@ const test = async function testDBConnection() {
     }
 }
 
+    // (async () => {
+    //     try {
+    //         const connection = await pool.getConnection();
+    //         console.log('✅ Database connection established');
+    //         connection.release();
+    //     } catch (err) {
+    //         console.error('❌ Failed to connect to the database.');
+    //         console.error('Reason:', err.code || err.message);
+    //         process.exit(1); // Exit the app
+    //     }
+    // });
+
 export default {
     conn: pool,
-    testConnection :test,
+    testConnection: test,
 };

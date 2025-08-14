@@ -289,7 +289,7 @@ BEGIN
 END$$
 
 DELIMITER ;
-
+SELECT * FROM car;
 SELECT * FROM models ORDER BY mod_register_data DESC;
 SELECT * FROM models WHERE `man_Id` = 23;
 SELECT * FROM manufacturers ORDER BY man_register_data DESC;
@@ -305,6 +305,12 @@ DELETE FROM manufacturers WHERE `man_Id` =  24;
 SELECT manufacturers.*, models.modName
 FROM manufacturers
 JOIN models ON manufacturers.`man_Id` = models.`man_Id` LIMIT 200;
+
+SELECT costumer.*, car.*
+FROM costumer
+JOIN car ON costumer.`cos_Id` = car.`cos_Id`;
+
+
 
 
 

@@ -1,7 +1,6 @@
 //Node Dependencies
 import express from 'express';
 import path from 'path';
-import fs from 'fs/promises';
 import DB from "../utilities/uti-db.js";
 
 //Initializing Dependencies
@@ -14,23 +13,29 @@ router.use(express.json({ limit: "50mb" }));
 
 //Variable Section
 const carForm = path.join(rootPath.__rootDir, 'views', 'carRegistration.html');
-const carModels = path.join(rootPath.__rootDir, 'controllers', 'Json', 'Cars', 'model.json');
+// const carModels = path.join(rootPath.__rootDir, 'controllers', 'Json', 'Cars', 'model.json');
+const carAdditionPage = path.join(rootPath.__rootDir, 'views', 'test', 'carAddition.html');
+const currDate = new Date();
+
+
 
 const addCar = (req, res) => {
     console.log(req.url);
+    // console.log(req);
+    // console.log(req.params);
     res.sendFile(carForm);
 }
 
 const sendCarModel = async (req, res) => {
-    const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id`;
+    const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id DESC`;
 
     const carData = await DB.conn.execute(fetchCarJson);
-    console.log(carData);
+    // console.log(carData);
     try {
         res.status(200).json({
             success: true,
             error: null,
-            data: carData
+            data: carData[0]
         });
     } catch (error) {
         //status 204 Server successfully processes the request but has no content to return in the response body.
@@ -42,29 +47,63 @@ const sendCarModel = async (req, res) => {
     }
 }
 
-
-async function readCarFile(file) {
-    console.log("Reading File", file);
+const saveData = async (req, res) => {
+    // console.log(req.body);
+    const car = { ...req.body };
+    console.log(car);
+    // console.log(car.car_Id,car.carModel,car.carYear,car.carManufacturer,car.carLicensePlate,car.carVin,car.carCurrMilage,car.cos_Id,car.car_Registration_Date);
+    const query2Car = 'INSERT INTO car (car_id,carModel,carYear,carManufacturer,carLicensePlate,carVin,carCurrMilage,cos_Id,car_Registration_Date) VALUES(?,?,?,?,?,?,?,?,?)'
+    await DB.conn.execute(query2Car, [car.car_Id, car.carModel, car.carYear, car.carManufacturer, car.carLicensePlate, car.carVin, car.carCurrMilage, car.cos_Id, car.car_Registration_Date]);
     try {
-        const dataRaw = await fs.readFile(file, 'utf8');
-        // console.log('File content:', JSON.parse(dataRaw));
-        const dataJson = JSON.parse(dataRaw);
-        return {
+        res.status(200).json({
             success: true,
             error: null,
-            data: dataJson
-        }
+        });
     } catch (err) {
-        return {
+        res.status(204).json({
             success: false,
             error: err,
-            data: null
-        }
+        });
+    }
+
+}
+
+const addNewManufacturer = async (req, res) => {
+    console.log("New car's Manufacturer sent from website: ", req.body);
+    const queryMan = `INSERT INTO manufacturers (manName,man_register_data) VALUES (?,?);`;
+    const queryModel = `INSERT INTO models (modName, man_Id,mod_register_data) VALUES (?, (SELECT man_Id FROM manufacturers WHERE manName = ?),?);`;
+    // console.log(currDate);
+    try {
+        const exMan = await DB.conn.execute(queryMan, [req.body.newCarMan, currDate]);
+        const exModel = await DB.conn.execute(queryModel, [req.body.newCarModel,req.body.newCarMan, currDate]);
+        console.log("Consult:  ",exMan);
+        res.status(200).json({
+            success: true,
+            data: req.body,
+            error: null,
+        })
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            data: null,
+            error: err.message,
+        })
     }
 }
+
+const test = async (req, res) => {
+    console.log('Testing the car Addition page');
+    res.status(200);
+    res.sendFile(carAdditionPage);
+}
+
 
 //Exports whatever is above under Express.Router
 export default {
     registration: addCar,
     sendData: sendCarModel,
+    postData: saveData,
+    addNewMan: addNewManufacturer,
+    test: test,
+
 }
