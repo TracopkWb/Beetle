@@ -18,6 +18,12 @@
 
   <body>
     <new-car-modal-card></new-car-modal-card>
+    <!-- Notification container -->
+    <div
+      id="notifications-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 9999"
+    ></div>
+
     <!-- <dialog>
       <button autofocus>Close</button>
       <p>This modal dialog has a groovy backdrop!</p>
@@ -25,19 +31,40 @@
     <button>Show the dialog</button> -->
   </body>
   <script type="module" src="/Js/webElements/wE-car-modal-card.js"></script>
-  <!-- <script>
-    const dialog = document.querySelector("dialog");
-    const showButton = document.querySelector("dialog + button");
-    const closeButton = document.querySelector("dialog button");
+  <script>
+    function showNotification(message, type = "info") {
+      const container = document.getElementById("notifications-container");
 
-    // "Show the dialog" button opens the dialog modally
-    showButton.addEventListener("click", () => {
-      dialog.showModal();
-    });
+      const not = document.createElement("div");
+      not.textContent = message;
+      not.style.cssText = `
+        background: ${type === "error" ? "#ff4d4f" : "#4caf50"};
+        color: white;
+        padding: 10px 20px;
+        margin-top: 10px;
+        border-radius: 8px;
+        font-family: sans-serif;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
 
-    // "Close" button closes the dialog
-    closeButton.addEventListener("click", () => {
-      dialog.close();
-    });
-  </script> -->
+      container.appendChild(not);
+
+      // Fade in
+      setTimeout(() => {
+        not.style.opacity = "1";
+      }, 10);
+
+      // Remove after 10 sec
+      setTimeout(() => {
+        not.style.opacity = "0";
+        setTimeout(() => not.remove(), 300);
+      }, 10000);
+
+      document.addEventListener('notify',(e)=>{
+        showNotification(e.detail.message, e.detail.type)
+      })
+    }
+  </script>
 </html>

@@ -15,6 +15,7 @@ class carModel extends HTMLElement {
         await this.render();
         const manufacturerSelect = this.shadowRoot.querySelector('[data-manufacturer-selection]');
         const modelSelect = this.shadowRoot.querySelector('[data-model-selection]');
+        const sendButton = this.shadowRoot.querySelector('[data-send-form-button]');
         console.log(modelSelect);
         // console.log(manufacturerSelect);
         let manSelected = '';
@@ -23,14 +24,9 @@ class carModel extends HTMLElement {
             console.log(e.target.value);
             manSelected = e.target.value;
             if (e.target.value.toString().toLowerCase() == 'other') {
-                const dialogModal = document.createElement('new-car-modal-card');
-                // const dialogModal = document.createElement('new-car-modal-card');
-                if (!this.shadowRoot.contains(dialogModal)) {
-                    this.shadowRoot.appendChild(dialogModal);
-                }
-                // console.log(dialogModal);
+                const dialogModal = document.createElement('new-car-selector');
                 dialogModal.addEventListener('send-data', (e) => {
-                    console.log("CustomEvent: ", e.detail);
+                    console.log("CustomEvent: ", e.detail.message.newCarModel);
                     const newOptMan = document.createElement('option');
                     newOptMan.name = 'carMan';
                     newOptMan.textContent = e.detail.message.newCarMan;
@@ -41,44 +37,78 @@ class carModel extends HTMLElement {
                     newOptModel.name = 'carModel';
                     newOptModel.textContent = e.detail.message.newCarModel;
                     newOptModel.value = e.detail.message.newCarModel;
+                    newOptModel.setAttribute('selected', '');
 
                     const newOptOther = document.createElement('option');
                     newOptOther.name = 'carModel';
-                    newOptOther.textContent = '----Other----';
+                    newOptOther.textContent = '---Other----';
                     newOptOther.value = '';
 
                     manufacturerSelect.appendChild(newOptMan);
                     this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptOther);
                     this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptModel);
                 });
-                e.target.value = ''; 
+                e.target.value = '';
+                this.shadowRoot.appendChild(dialogModal);
             }
-
         });
 
         modelSelect.addEventListener('change', (e) => {
             console.log(e.target.value);
             if (e.target.value.toLowerCase() == 'other') {
-                const dialogModal2 = document.createElement('new-car-modal-card');
-                // console.log(dialogModal);
+                const dialogModal2 = document.createElement('new-car-selector');
+                // console.log(dialogModal2);
 
                 console.log(manSelected);
                 dialogModal2.data = manSelected;
 
                 dialogModal2.addEventListener('send-data', (e) => {
-                    console.log("CustomEvent: ", e.detail);
+                    console.log("CustomEvent: ", e.detail.message);
                     const modelSelect = this.shadowRoot.querySelector('[data-model-selection]');
                     const newOptModel = document.createElement('option');
                     newOptModel.value = e.detail.message.newCarModel;
                     newOptModel.textContent = e.detail.message.newCarModel;
+                    newOptModel.setAttribute('selected', '');
                     modelSelect.appendChild(newOptModel);
                 });
                 this.shadowRoot.appendChild(dialogModal2);
             }
+            // e.target.value = '';
         });
 
-
-        //Listening for the Car's Form Modal
+        ////SEND THE CAR'S FORM
+        sendButton.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const form = this.shadowRoot.querySelector('[data-car-form]');
+            // console.log(form);
+            const formRawData = new FormData(form);
+            const formData = Object.fromEntries(formRawData.entries());
+            // console.log((formData));
+            const idFormatted = formData.carOwner.toString().concat("-", formData.carLicensePlate.toString());
+            // console.log(idFormatted);
+            const carDataFormatted = {
+                car_Id: idFormatted.toString(),
+                carModel: formData.carModel.toString(),
+                carYear: formData.carYear.toString(),
+                carManufacturer: formData.carMan.toString(),
+                carLicensePlate: formData.carLicensePlate.toString(),
+                carVin: formData.carVin.toString(),
+                carCurrMilage: parseInt(formData.carCurrMilage),
+                cos_Id: formData.carOwner.toString(),
+                car_Registration_Date: new Date(),
+                cos_Id: formData.carOwner.toString(),
+            }
+            const serverRes = await fetch('/Forms/Car/saveData', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(carDataFormatted),
+            });
+            const res = await serverRes.json();
+            console.log(res);
+            this.sendNotification(res);
+        });
 
     }
 
@@ -122,7 +152,7 @@ class carModel extends HTMLElement {
         otherManufacturerOpt.value = 'Other';
         otherManufacturerOpt.textContent = '-----Other------';
         manufacturerSelect.appendChild(nullManufacturerOpt);
-        manufacturerSelect.appendChild(otherManufacturerOpt);
+        // manufacturerSelect.appendChild(otherManufacturerOpt);
 
         // Model
         const modelLabel = document.createElement('label');
@@ -214,6 +244,7 @@ class carModel extends HTMLElement {
 
         const sendButton = document.createElement('button');
         sendButton.textContent = 'Send';
+        sendButton.dataset.sendFormButton = '';
 
         // Object.entries(fixedData).forEach(datum => {
         //     // console.log(datum);
@@ -261,7 +292,7 @@ class carModel extends HTMLElement {
             // Clear old options (but keep first)
             modelSelect.length = 1;
             const models = fixedData[selectedMan];
-            console.log((models));
+            // console.log((models));
             if (models) {
                 Object.values(models).forEach((carName) => {
                     // console.log(carName);
@@ -272,39 +303,7 @@ class carModel extends HTMLElement {
                 });
             }
         });
-
-        ////SEND THE CAR'S FORM
-        // sendButton.addEventListener('click', async (e) => {
-        //     e.preventDefault();
-        //     // alert(1);
-        //     const form = this.shadowRoot.querySelector('[data-car-form]');
-        //     // console.log(form);
-        //     const formRawData = new FormData(form);
-        //     const formData = Object.fromEntries(formRawData.entries());
-        //     console.log((formData));
-        //     const idFormatted = formData.carOwner.toString().concat("-", formData.carLicensePlate.toString());
-        //     console.log(idFormatted);
-        //     const carDataFormatted = {
-        //         car_Id: idFormatted.toString(),
-        //         carModel: formData.carModel.toString(),
-        //         carYear: formData.carYear.toString(),
-        //         carManufacturer: formData.carMan.toString(),
-        //         carLicensePlate: formData.carLicensePlate.toString(),
-        //         carVin: formData.carVin.toString(),
-        //         carCurrMilage: parseInt(formData.carCurrMilage),
-        //         cos_Id: formData.carOwner.toString(),
-        //         car_Registration_Date: new Date(),
-        //         cos_Id: formData.carOwner.toString(),
-        //     }
-        //     const serverRes = await fetch('/Forms/Car/saveData', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(carDataFormatted),
-        //     });
-        //     console.log(await serverRes.json());
-        // });
+        manufacturerSelect.appendChild(otherManufacturerOpt);
     }
 
     async getCostumerList() {
@@ -342,10 +341,20 @@ class carModel extends HTMLElement {
         });
     }
 
-
+    sendNotification(notification) {
+        console.log('Sending a notification ', notification);
+        this.dispatchEvent(new CustomEvent('notify', {
+            detail: {
+                message: notification.data,
+                type: notification.type,
+            },
+            bubbles: true,     // Allows event to bubble up
+            composed: true,
+        }));
+    }
 
 
 }
 
-customElements.define('car-model-card', carModel);
+customElements.define('car-registration-form', carModel);
 

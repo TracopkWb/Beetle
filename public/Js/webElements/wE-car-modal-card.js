@@ -12,7 +12,7 @@ class Modal extends HTMLElement {
     }
 
     connectedCallback() {
-        this.render();
+        this.render(this._data);
 
         const dialog = this.shadowRoot.querySelector('dialog');
         dialog.showModal();
@@ -22,7 +22,6 @@ class Modal extends HTMLElement {
             // e.preventDefault();
             const dialog = this.shadowRoot.querySelector('[data-new-car]');
             dialog.close();
-            // alert(1);
         });
 
         const sendBtn = this.shadowRoot.querySelector('[data-send-btn]');
@@ -32,51 +31,59 @@ class Modal extends HTMLElement {
             const formDiv = this.shadowRoot.querySelector('[data-new-car-addition]')
             const newCarFormRawData = new FormData(formDiv);
             const newCarFormData = Object.fromEntries(newCarFormRawData.entries());
-            console.log(this.data, newCarFormData);
-            if (this.data) {
-                this.shadowRoot.querySelector('[data-manufacturer-selection]').value;
+            const newCarFormDataFlagged = {
+                newCarMan: newCarFormData.newCarMan,
+                newCarModel: newCarFormData.newCarModel, 
+                flag: null,
+            }
+            console.log(this._data, newCarFormDataFlagged);
+            const dialog = this.shadowRoot.querySelector('[data-new-car]');
+            const data2Send = {
+                message: newCarFormDataFlagged,
+            };
+            if (this._data) {
+                console.log("Saving only the model", data2Send.message);
+                data2Send.message.newCarMan = this._data; //Setting carMan to null
+                data2Send.message.flag = 1; //Only add the model into table
                 dialog.close();
             } else {
-                const data2Send = {
-                    message: newCarFormData
-                };
-                this.dispatchEvent(new CustomEvent('send-data', {
-                    detail: data2Send,
-                    bubbles: true,  // allow the event to bubble up through DOM
-                    composed: true, // allow it to cross shadow DOM boundary
-                }));
+                console.log(`Saving the manufacturer and model`);
+                data2Send.message.flag = 0;//Add the manufacturer and model into table
             }
-            const dialog = this.shadowRoot.querySelector('[data-new-car]');
+            this.dispatchEvent(new CustomEvent('send-data', {
+                detail: data2Send,
+                bubbles: true,  // allow the event to bubble up through DOM
+                composed: true, // allow it to cross shadow DOM boundary
+            }));
             dialog.close();
-            console.log(newCarFormData);
-
-
-
-            // const sendNewModel = await fetch('/Forms/Car/newAddition/newCar', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(newCarFormData),
-            // });
-            // console.log(await sendNewModel.json());
-            // if (sendNewModel.ok) {
-            //     const dialog = this.shadowRoot.querySelector('[data-new-car]');
-            //     console.log(await sendNewModel.json());
-            // dialog.close();
-            // } else {
-            //     console.log(sendNewModel.statusText);
-            // }
+            // console.log(newCarFormData);
+            const sendNewModel = await fetch('/Forms/Car/newAddition/newCar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newCarFormDataFlagged),
+            });
+            console.log(await sendNewModel);
+            console.log(await sendNewModel.json());
+            if (sendNewModel.ok) {
+                const dialog = this.shadowRoot.querySelector('[data-new-car]');
+                // console.log(await sendNewModel);
+            dialog.close();
+            } else {
+                console.log(sendNewModel.statusText);
+            }
         });
     }
 
     set data(carData) {
         this.render(carData);
+        this._data = carData;
         // console.log("Project Data: ", projectData);
     }
 
     async render(carData) {
-        console.log(carData);
+        // console.log(carData);
         //Dialog tag creation
         const dialogDiv = document.createElement('dialog');
         dialogDiv.dataset.newCar = '';
@@ -156,6 +163,6 @@ class Modal extends HTMLElement {
 }
 
 ////////////////Remember to change the type= module in the html file
-customElements.define('new-car-modal-card', Modal);
+customElements.define('new-car-selector', Modal);
 
 

@@ -1,16 +1,39 @@
+document.addEventListener("notify", (e) => {
+  console.log(e.detail.message);
+  showNotification(e.detail.type, e.detail.message);
+});
+function showNotification(type, message) {
+  const container = document.getElementById("notifications-container");
+  // console.log(container);
+  const not = document.createElement("div");
+  if (type == 'error') {
+    not.textContent = `There has been an error adding the car to the system`;
 
-window.addEventListener('DOMContentLoaded',async ()=>{
-  console.log("Hola Mundo")  ;
-  console.log( window.location.href)
-  const url = new URL(window.location.href);
-  console.log(url.searchParams.get('nombre'));
-  const urlNombre = url.searchParams.get('nombre');
-  const div = document.createElement('div');
-  div.textContent = urlNombre;
-  document.body.appendChild(div);
+  } else {
+    not.textContent = `The car: ${message.carManufacturer} - ${message.carModel} has been saved under costumer ${message.cosId}`
+  }
+  not.style.cssText = `
+        background: ${type === "error" ? "#ff4d4f" : "#4caf50"};
+        color: white;
+        padding: 10px 20px;
+        margin-top: 10px;
+        border-radius: 8px;
+        font-family: sans-serif;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
 
-//   console.log(Object.fromEntries(url.searchParams.entries()));
-  const rea = await fetch(`/Forms/Car/Registration?nombre=${urlNombre}`);
+  container.appendChild(not);
 
-//   console.log(await rea.json());
-})
+  // Fade in
+  setTimeout(() => {
+    not.style.opacity = "1";
+  }, 10);
+
+  // Remove after 10 sec
+  setTimeout(() => {
+    not.style.opacity = "0";
+    setTimeout(() => not.remove(), 300);
+  }, 2000);
+}

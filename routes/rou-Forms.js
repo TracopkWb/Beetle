@@ -28,7 +28,7 @@ router.get("/Car/Registration",carFile.registration);
 // router.post("/Car/Registration",carFile.test);
 router.get("/Car/sendData",carFile.sendData);
 router.post("/Car/saveData",carFile.postData);
-router.post('/Car/newAddition/newCar', carFile.addNewMan);
+router.post('/Car/newAddition/newCar', carFile.addNewCarData);
 
 //Testing new pages
 router.get('/Car/newAddition', carFile.test)

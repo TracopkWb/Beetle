@@ -260,7 +260,7 @@ ON
 GROUP BY 
     man.`man_Id`
 
-SELECT CONCAT('{"manufacturer":', man.manName,',"models": [', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id
+SELECT CONCAT('{"manufacturer":', man.manName,',"models": [',GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id DESC;
 
 SELECT 
   JSON_OBJECT(

@@ -27,7 +27,7 @@ const addCar = (req, res) => {
 }
 
 const sendCarModel = async (req, res) => {
-    const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.man_Id DESC`;
+    const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.manName ASC`;
 
     const carData = await DB.conn.execute(fetchCarJson);
     // console.log(carData);
@@ -35,14 +35,15 @@ const sendCarModel = async (req, res) => {
         res.status(200).json({
             success: true,
             error: null,
-            data: carData[0]
+            data: carData[0],
+
         });
     } catch (error) {
         //status 204 Server successfully processes the request but has no content to return in the response body.
         res.status(204).json({
             success: false,
             error: null,
-            data: carData
+            data: carData,
         })
     }
 }
@@ -53,40 +54,46 @@ const saveData = async (req, res) => {
     console.log(car);
     // console.log(car.car_Id,car.carModel,car.carYear,car.carManufacturer,car.carLicensePlate,car.carVin,car.carCurrMilage,car.cos_Id,car.car_Registration_Date);
     const query2Car = 'INSERT INTO car (car_id,carModel,carYear,carManufacturer,carLicensePlate,carVin,carCurrMilage,cos_Id,car_Registration_Date) VALUES(?,?,?,?,?,?,?,?,?)'
-    await DB.conn.execute(query2Car, [car.car_Id, car.carModel, car.carYear, car.carManufacturer, car.carLicensePlate, car.carVin, car.carCurrMilage, car.cos_Id, car.car_Registration_Date]);
     try {
+        await DB.conn.execute(query2Car, [car.car_Id, car.carModel, car.carYear, car.carManufacturer, car.carLicensePlate, car.carVin, car.carCurrMilage, car.cos_Id, car.car_Registration_Date]);
         res.status(200).json({
             success: true,
-            error: null,
+            data:req.body,
+            type: 'notification',
         });
     } catch (err) {
-        res.status(204).json({
+        res.status(500).json({
             success: false,
-            error: err,
+            data: err.message,
+            type:'error',
         });
     }
 
 }
 
-const addNewManufacturer = async (req, res) => {
+const addCarData = async (req, res) => {
     console.log("New car's Manufacturer sent from website: ", req.body);
-    const queryMan = `INSERT INTO manufacturers (manName,man_register_data) VALUES (?,?);`;
-    const queryModel = `INSERT INTO models (modName, man_Id,mod_register_data) VALUES (?, (SELECT man_Id FROM manufacturers WHERE manName = ?),?);`;
     // console.log(currDate);
     try {
-        const exMan = await DB.conn.execute(queryMan, [req.body.newCarMan, currDate]);
-        const exModel = await DB.conn.execute(queryModel, [req.body.newCarModel,req.body.newCarMan, currDate]);
-        console.log("Consult:  ",exMan);
+        if (req.body.flag == 0) {
+            const queryMan = `INSERT INTO manufacturers (manName,man_register_data) VALUES (?,?)`;
+            const exMan = await DB.conn.execute(queryMan, [req.body.newCarMan, currDate]);
+            console.log("Consult:  ", exMan);
+        }
+        const queryModel = `INSERT INTO models (modName, man_Id,mod_register_data) VALUES (?, (SELECT man_Id FROM manufacturers WHERE manName = ?),?)`;
+        const exModel = await DB.conn.execute(queryModel, [req.body.newCarModel, req.body.newCarMan, currDate]);
         res.status(200).json({
             success: true,
             data: req.body,
             error: null,
+            type: 'notification',
         })
     } catch (err) {
         res.status(500).json({
             success: false,
             data: null,
             error: err.message,
+            type:'error',
         })
     }
 }
@@ -103,7 +110,7 @@ export default {
     registration: addCar,
     sendData: sendCarModel,
     postData: saveData,
-    addNewMan: addNewManufacturer,
+    addNewCarData: addCarData,
     test: test,
 
 }
