@@ -127,6 +127,7 @@ class carModel extends HTMLElement {
             method: 'Get'
         });
         const dataRawObj = await dataRaw.json();
+        this.sendNotification(dataRawObj);
         const fixedData = await this.fixJson(dataRawObj.data);
         // console.log(fixedData);
         // Create container elements
@@ -345,7 +346,8 @@ class carModel extends HTMLElement {
         console.log('Sending a notification ', notification);
         this.dispatchEvent(new CustomEvent('notify', {
             detail: {
-                message: notification.data,
+                message: notification.error,
+                data:notification.data,
                 type: notification.type,
             },
             bubbles: true,     // Allows event to bubble up

@@ -1,16 +1,17 @@
 document.addEventListener("notify", (e) => {
-  console.log(e.detail.message);
-  showNotification(e.detail.type, e.detail.message);
+  console.log(e);
+  console.log(e.detail);
+  showNotification(e.detail.type, e.detail.message,e.detail.data);
 });
-function showNotification(type, message) {
+function showNotification(type,message,data) {
   const container = document.getElementById("notifications-container");
   // console.log(container);
   const not = document.createElement("div");
   if (type == 'error') {
-    not.textContent = `There has been an error adding the car to the system`;
+    not.textContent = `${data}`;
 
   } else {
-    not.textContent = `The car: ${message.carManufacturer} - ${message.carModel} has been saved under costumer ${message.cosId}`
+    not.textContent = `The car: ${data.carManufacturer} - ${data.carModel} has been saved under costumer ${data.cos_Id}`;
   }
   not.style.cssText = `
         background: ${type === "error" ? "#ff4d4f" : "#4caf50"};
@@ -34,6 +35,6 @@ function showNotification(type, message) {
   // Remove after 10 sec
   setTimeout(() => {
     not.style.opacity = "0";
-    setTimeout(() => not.remove(), 300);
+    setTimeout(() => not.remove(), 500);
   }, 2000);
 }

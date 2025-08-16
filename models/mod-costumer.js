@@ -54,7 +54,7 @@ const sendCostumers2WebSite = async (req, res) => {
         res.status(204).json({
             success: false,
             data: null,
-            error: err,
+            error: err.message,
         });
     }
 }

@@ -29,22 +29,30 @@ const addCar = (req, res) => {
 const sendCarModel = async (req, res) => {
     const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.manName ASC`;
 
-    const carData = await DB.conn.execute(fetchCarJson);
     // console.log(carData);
     try {
+        const checkingDB = await DB.testConnection();
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            data: 'There is a problem with the Database, remember to turn on XAMPP',
+            type: 'error',
+        });
+    }
+    try {
+        const carData = await DB.conn.execute(fetchCarJson);
         res.status(200).json({
             success: true,
-            error: null,
             data: carData[0],
-
+            type: 'notification',
         });
-    } catch (error) {
+    } catch (err) {
         //status 204 Server successfully processes the request but has no content to return in the response body.
-        res.status(204).json({
+        res.status(500).json({
             success: false,
-            error: null,
-            data: carData,
-        })
+            data: err.message,
+            type: 'error',
+        });
     }
 }
 
@@ -58,14 +66,14 @@ const saveData = async (req, res) => {
         await DB.conn.execute(query2Car, [car.car_Id, car.carModel, car.carYear, car.carManufacturer, car.carLicensePlate, car.carVin, car.carCurrMilage, car.cos_Id, car.car_Registration_Date]);
         res.status(200).json({
             success: true,
-            data:req.body,
+            data: req.body,
             type: 'notification',
         });
     } catch (err) {
         res.status(500).json({
             success: false,
             data: err.message,
-            type:'error',
+            type: 'error',
         });
     }
 
@@ -85,15 +93,13 @@ const addCarData = async (req, res) => {
         res.status(200).json({
             success: true,
             data: req.body,
-            error: null,
             type: 'notification',
         })
     } catch (err) {
         res.status(500).json({
             success: false,
-            data: null,
-            error: err.message,
-            type:'error',
+            data: err.message,
+            type: 'error',
         })
     }
 }

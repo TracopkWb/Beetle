@@ -12,12 +12,16 @@ const pool = mysql2.createPool({
 });
 
 
-const test = async function testDBConnection() {
+const test = async function testDBConnection(req,res) {
     try {
         const [rows] = await pool.query('SELECT 1');
         console.log('✅ Database is up and responding');
     } catch (err) {
         console.error('❌ Database connection failed:', err.message);
+        res.json({
+            success: false,
+            type: 'error',
+        })
     }
 }
 
