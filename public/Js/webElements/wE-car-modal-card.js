@@ -30,33 +30,31 @@ class Modal extends HTMLElement {
             e.preventDefault();
             const formDiv = this.shadowRoot.querySelector('[data-new-car-addition]')
             const newCarFormRawData = new FormData(formDiv);
+            if (!formDiv.checkValidity()) {
+                formDiv.reportValidity(); // shows browser validation messages
+                return;
+            }
             const newCarFormData = Object.fromEntries(newCarFormRawData.entries());
             const newCarFormDataFlagged = {
                 newCarMan: newCarFormData.newCarMan,
-                newCarModel: newCarFormData.newCarModel, 
+                newCarModel: newCarFormData.newCarModel,
                 flag: null,
+                error: null,
             }
-            console.log(this._data, newCarFormDataFlagged);
+            // console.log(this._data, newCarFormDataFlagged);
             const dialog = this.shadowRoot.querySelector('[data-new-car]');
             const data2Send = {
                 message: newCarFormDataFlagged,
             };
             if (this._data) {
-                console.log("Saving only the model", data2Send.message);
+                // console.log("Saving only the model", data2Send.message);
                 data2Send.message.newCarMan = this._data; //Setting carMan to null
                 data2Send.message.flag = 1; //Only add the model into table
                 dialog.close();
             } else {
-                console.log(`Saving the manufacturer and model`);
+                // console.log(`Saving the manufacturer and model`);
                 data2Send.message.flag = 0;//Add the manufacturer and model into table
             }
-            this.dispatchEvent(new CustomEvent('send-data', {
-                detail: data2Send,
-                bubbles: true,  // allow the event to bubble up through DOM
-                composed: true, // allow it to cross shadow DOM boundary
-            }));
-            dialog.close();
-            // console.log(newCarFormData);
             const sendNewModel = await fetch('/Forms/Car/newAddition/newCar', {
                 method: 'POST',
                 headers: {
@@ -64,12 +62,21 @@ class Modal extends HTMLElement {
                 },
                 body: JSON.stringify(newCarFormDataFlagged),
             });
-            console.log(await sendNewModel);
-            console.log(await sendNewModel.json());
+            // console.log(await sendNewModel);
+
+            const res = await sendNewModel.json();
+            data2Send.message.error = (res.type === 'error') ? true : false;
+            console.log(data2Send.message);
+            this.sendNotification(res, res.show);
+            this.dispatchEvent(new CustomEvent('send-data', {
+                detail: data2Send,
+                bubbles: true,  // allow the event to bubble up through DOM
+                composed: true, // allow it to cross shadow DOM boundary
+            }));
             if (sendNewModel.ok) {
                 const dialog = this.shadowRoot.querySelector('[data-new-car]');
                 // console.log(await sendNewModel);
-            dialog.close();
+                dialog.close();
             }
         });
     }
@@ -158,6 +165,22 @@ class Modal extends HTMLElement {
         // dialogDiv.showModal();
     }
 
+    sendNotification(notification, flag) {
+        console.log('Sending a notification ', notification);
+        if (flag) {
+            this.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    origin: notification.origin,
+                    message: notification.error,
+                    data: notification.data,
+                    type: notification.type,
+                    show: notification.show,
+                },
+                bubbles: true,     // Allows event to bubble up
+                composed: true,
+            }));
+        }
+    }
 }
 
 ////////////////Remember to change the type= module in the html file

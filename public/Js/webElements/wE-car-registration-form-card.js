@@ -46,7 +46,7 @@ class carModel extends HTMLElement {
             if (e.target.value.toString().toLowerCase() == 'other') {
                 const dialogModal = document.createElement('new-car-selector');
                 dialogModal.addEventListener('send-data', (e) => {
-                    console.log("CustomEvent: ", e.detail.message.newCarModel);
+                    console.log("CustomEvent: ", e.detail.message);
                     const newOptMan = document.createElement('option');
                     newOptMan.name = 'carMan';
                     newOptMan.textContent = e.detail.message.newCarMan;
@@ -64,9 +64,12 @@ class carModel extends HTMLElement {
                     newOptOther.textContent = '---Other----';
                     newOptOther.value = '';
 
-                    manufacturerSelect.appendChild(newOptMan);
-                    this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptOther);
-                    this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptModel);
+                    if (!e.detail.message.error) {
+                        console.log('Appending options');
+                        manufacturerSelect.appendChild(newOptMan);
+                        this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptOther);
+                        this.shadowRoot.querySelector('[data-model-selection]').appendChild(newOptModel);
+                    }
                 });
                 e.target.value = '';
                 this.shadowRoot.appendChild(dialogModal);
@@ -74,7 +77,7 @@ class carModel extends HTMLElement {
         });
 
         modelSelect.addEventListener('change', (e) => {
-            // console.log(e.target.value);
+            console.log(e.target.value);
             
             if (e.target.value.toLowerCase() == 'other') {
                 const dialogModal2 = document.createElement('new-car-selector');
@@ -125,6 +128,7 @@ class carModel extends HTMLElement {
             };
             // this.dispatchEvent(new CustomEvent('submit'));
             this.sendData2server(carDataFormatted);
+            form.reset();
         });
     }
 

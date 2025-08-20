@@ -37,15 +37,12 @@ const sendCarModel = async (req, res) => {
             success: false,
             data: checkingDB.data,
             type: 'error',
-            origin:'sendCarModel()-testConnection()',
+            origin: 'sendCarModel()-testConnection()',
             show: true
         });
     } else {
         console.log('Status:', checkingDB);
     }
-
-
-
 
     try {
         const carData = await DB.conn.execute(fetchCarJson);
@@ -77,16 +74,16 @@ const saveData = async (req, res) => {
             success: true,
             data: req.body,
             type: 'notification',
-            show:true,
-            origin:'saveData()',
+            show: true,
+            origin: 'saveData()',
         });
     } catch (err) {
         res.status(500).json({
             success: false,
             data: err.message,
             type: 'error',
-            show:true,
-            origin:'saveData()',
+            show: true,
+            origin: 'saveData()',
         });
     }
 
@@ -95,6 +92,40 @@ const saveData = async (req, res) => {
 const addCarData = async (req, res) => {
     console.log("New car's Manufacturer sent from website: ", req.body);
     // console.log(currDate);
+    ////CHECK THE CONNECTION TO THE DB BEFORE ANYTHING ELSE
+    const checkingDB = await DB.testConnection();
+    if (!checkingDB.success) {
+        res.status(500).json({
+            success: false,
+            data: checkingDB.data,
+            type: 'error',
+            origin: 'sendCarModel()-testConnection()',
+            show: true,
+        });
+    } else {
+        console.log('Status:', checkingDB);
+    }
+    ////Checking for duplicity
+    const checkData = await checkDuplicity(req.body, req.body.flag);
+    if (!checkData.success) {
+        res.status(500).json({
+            success: false,
+            data: checkData.data,
+            type: 'error',
+            origin: `addCarData-`.concat(checkData.origin),
+            show: true,
+        });
+    } else {
+        res.status(200).json({
+            success: true,
+            data: checkData.data,
+            type: 'notification-newCar',
+            origin: `addCarData-`.concat(checkData.origin),
+            show: false,
+        });
+    }
+
+
     try {
         if (req.body.flag == 0) {
             const queryMan = `INSERT INTO manufacturers (manName,man_register_data) VALUES (?,?)`;
@@ -106,7 +137,9 @@ const addCarData = async (req, res) => {
         res.status(200).json({
             success: true,
             data: req.body,
-            type: 'notification',
+            type: 'notification-newCar',
+            origin: `addCarData-sqlQuery`,
+            show: false,
         })
     } catch (err) {
         res.status(500).json({
@@ -133,14 +166,53 @@ export default {
     test: test,
 }
 
-// async function testConnectionDB() {
-//     try {
-//         const checkingDB = await DB.testConnection();
-//     } catch (err) {
-//         return {
-//             success: false,
-//             data: 'There is a problem with the Database, remember to turn on XAMPP',
-//             type: 'error',
-//         };
-//     }
-// }
+
+async function checkDuplicity(carData, flag) {
+    try {
+        console.log(carData, flag);
+
+        let query, value;
+
+        if (flag === 0) {
+            //Adding the Manufacturer
+            query = `SELECT * FROM manufacturers WHERE manName = ?`;
+            value = carData.newCarMan;
+        } else if (flag === 1) {
+            // Adding the Model
+            query = `SELECT * FROM models WHERE modName = ?`;
+            value = carData.newCarModel;
+        } else {
+            throw new Error(`Invalid flag: ${flag}`);
+        }
+
+        const [rows] = await DB.conn.execute(query, [value]);
+
+        if (rows.length > 0) {
+            return {
+                success: false,
+                data: `${value} has already been added!`,
+                type: "error",
+                origin: "checkDuplicity()",
+                show: true,
+            };
+        } else {
+            return {
+                success: true,
+                data: `${value} is available`,
+                type: "notification",
+                origin: "checkDuplicity()",
+                show: false,
+            };
+        }
+
+    } catch (err) {
+        console.error("checkDuplicity error:", err.message);
+        return {
+            success: false,
+            data: "Database error occurred",
+            type: "error",
+            origin: "checkDuplicity()",
+            show: true,
+        };
+    }
+}

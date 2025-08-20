@@ -31,7 +31,8 @@ router.post("/Car/saveData",carFile.postData);
 router.post('/Car/newAddition/newCar', carFile.addNewCarData);
 
 //Testing new pages
-router.get('/Car/newAddition', carFile.test)
+// router.get('/Car/newAddition', carFile.test);
+router.get('/Costumer/Agenda', carFile.test);
 
 router.get('/', (req, res, next) => {
     console.log(req.url);

@@ -19,7 +19,7 @@ const test = async function testDBConnection() {
         return{
             success: true,
             data:'Everything is ok',
-            type: '',
+            type: 'notification',
             origin: 'testDBConnection()',
             show: false,
         }
