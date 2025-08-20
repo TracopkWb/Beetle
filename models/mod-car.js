@@ -27,31 +27,40 @@ const addCar = (req, res) => {
 }
 
 const sendCarModel = async (req, res) => {
+
     const fetchCarJson = `SELECT CONCAT('{"manufacturer":"', man.manName,'","models":[', GROUP_CONCAT('"', mods.modName, '"'), ']}') AS result FROM manufacturers AS man JOIN models AS mods ON man.man_Id = mods.man_Id GROUP BY man.manName ASC`;
 
-    // console.log(carData);
-    try {
-        const checkingDB = await DB.testConnection();
-    } catch (err) {
+    ////CHECK THE CONNECTION TO THE DB BEFORE ANYTHING ELSE
+    const checkingDB = await DB.testConnection();
+    if (!checkingDB.success) {
         res.status(500).json({
             success: false,
-            data: 'There is a problem with the Database, remember to turn on XAMPP',
+            data: checkingDB.data,
             type: 'error',
+            origin:'sendCarModel()-testConnection()',
+            show: true
         });
+    } else {
+        console.log('Status:', checkingDB);
     }
+
+
+
+
     try {
         const carData = await DB.conn.execute(fetchCarJson);
         res.status(200).json({
             success: true,
             data: carData[0],
             type: 'notification',
+            show: false,
         });
     } catch (err) {
-        //status 204 Server successfully processes the request but has no content to return in the response body.
         res.status(500).json({
             success: false,
             data: err.message,
             type: 'error',
+            show: true,
         });
     }
 }
@@ -59,7 +68,7 @@ const sendCarModel = async (req, res) => {
 const saveData = async (req, res) => {
     // console.log(req.body);
     const car = { ...req.body };
-    console.log(car);
+    // console.log(car);
     // console.log(car.car_Id,car.carModel,car.carYear,car.carManufacturer,car.carLicensePlate,car.carVin,car.carCurrMilage,car.cos_Id,car.car_Registration_Date);
     const query2Car = 'INSERT INTO car (car_id,carModel,carYear,carManufacturer,carLicensePlate,carVin,carCurrMilage,cos_Id,car_Registration_Date) VALUES(?,?,?,?,?,?,?,?,?)'
     try {
@@ -68,12 +77,16 @@ const saveData = async (req, res) => {
             success: true,
             data: req.body,
             type: 'notification',
+            show:true,
+            origin:'saveData()',
         });
     } catch (err) {
         res.status(500).json({
             success: false,
             data: err.message,
             type: 'error',
+            show:true,
+            origin:'saveData()',
         });
     }
 
@@ -118,5 +131,16 @@ export default {
     postData: saveData,
     addNewCarData: addCarData,
     test: test,
-
 }
+
+// async function testConnectionDB() {
+//     try {
+//         const checkingDB = await DB.testConnection();
+//     } catch (err) {
+//         return {
+//             success: false,
+//             data: 'There is a problem with the Database, remember to turn on XAMPP',
+//             type: 'error',
+//         };
+//     }
+// }

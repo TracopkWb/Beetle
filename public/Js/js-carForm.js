@@ -1,7 +1,7 @@
 document.addEventListener("notify", (e) => {
-  console.log(e);
+  // console.log(e);
   console.log(e.detail);
-  showNotification(e.detail.type, e.detail.message,e.detail.data);
+  showNotification(e.detail.type, e.detail.message,e.detail.data,e.detail.origin);
 });
 function showNotification(type,message,data) {
   const container = document.getElementById("notifications-container");

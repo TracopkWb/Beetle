@@ -5,7 +5,6 @@ import DB from '../utilities/uti-db.js'
 
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
-import { error } from 'console';
 
 //Initializing Router
 const router = express.Router();
@@ -49,12 +48,15 @@ const sendCostumers2WebSite = async (req, res) => {
             success: true,
             data: query.data[0],
             error: null,
+            origin:'sendList-sendCostumer2Website()',
         });
     } catch (err) {
         res.status(204).json({
             success: false,
             data: null,
             error: err.message,
+            error: true,
+            origin:'sendList-sendCostumer2Website()',
         });
     }
 }

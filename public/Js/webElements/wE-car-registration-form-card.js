@@ -12,17 +12,37 @@ class carModel extends HTMLElement {
     }
 
     async connectedCallback() {
-        await this.render();
+        this.render();
+        const carData = await this.getCarManModel();
+        await this.populateMan(carData);
+        await this.getCostumerList();
+        // // console.log(carData);
+
         const manufacturerSelect = this.shadowRoot.querySelector('[data-manufacturer-selection]');
         const modelSelect = this.shadowRoot.querySelector('[data-model-selection]');
         const sendButton = this.shadowRoot.querySelector('[data-send-form-button]');
-        console.log(modelSelect);
+
+        // console.log(modelSelect);
         // console.log(manufacturerSelect);
         let manSelected = '';
         manufacturerSelect.addEventListener('change', (e) => {
             e.preventDefault();
-            console.log(e.target.value);
+            // console.log(e.target.value);
             manSelected = e.target.value;
+            // Clear old options (but keep first)
+            modelSelect.length = 1;
+            const models = carData[manSelected];
+            // console.log((models));
+            if (models) {
+                Object.values(models).forEach((carName) => {
+                    // console.log(carName);
+                    const opt = document.createElement('option');
+                    opt.value = carName;
+                    opt.textContent = carName;
+                    modelSelect.appendChild(opt);
+                });
+            }
+
             if (e.target.value.toString().toLowerCase() == 'other') {
                 const dialogModal = document.createElement('new-car-selector');
                 dialogModal.addEventListener('send-data', (e) => {
@@ -54,11 +74,11 @@ class carModel extends HTMLElement {
         });
 
         modelSelect.addEventListener('change', (e) => {
-            console.log(e.target.value);
+            // console.log(e.target.value);
+            
             if (e.target.value.toLowerCase() == 'other') {
                 const dialogModal2 = document.createElement('new-car-selector');
                 // console.log(dialogModal2);
-
                 console.log(manSelected);
                 dialogModal2.data = manSelected;
 
@@ -80,8 +100,13 @@ class carModel extends HTMLElement {
         sendButton.addEventListener('click', async (e) => {
             e.preventDefault();
             const form = this.shadowRoot.querySelector('[data-car-form]');
+
             // console.log(form);
             const formRawData = new FormData(form);
+            if (!form.checkValidity()) {
+                form.reportValidity(); // shows browser validation messages
+                return;
+            }
             const formData = Object.fromEntries(formRawData.entries());
             // console.log((formData));
             const idFormatted = formData.carOwner.toString().concat("-", formData.carLicensePlate.toString());
@@ -97,39 +122,18 @@ class carModel extends HTMLElement {
                 cos_Id: formData.carOwner.toString(),
                 car_Registration_Date: new Date(),
                 cos_Id: formData.carOwner.toString(),
-            }
-            const serverRes = await fetch('/Forms/Car/saveData', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(carDataFormatted),
-            });
-            const res = await serverRes.json();
-            console.log(res);
-            this.sendNotification(res);
+            };
+            // this.dispatchEvent(new CustomEvent('submit'));
+            this.sendData2server(carDataFormatted);
         });
-
     }
 
     set data(carData) {
-        this.render(carData);
+        // this.render();
         // console.log("Project Data: ", projectData);
     }
 
-    async render(carData) {
-        await this.getCarInfo();
-    }
-
-    async getCarInfo() {
-
-        const dataRaw = await fetch('/Forms/Car/sendData', {
-            method: 'Get'
-        });
-        const dataRawObj = await dataRaw.json();
-        this.sendNotification(dataRawObj);
-        const fixedData = await this.fixJson(dataRawObj.data);
-        // console.log(fixedData);
+    async render() {
         // Create container elements
         const container = document.createElement('div');
 
@@ -175,26 +179,16 @@ class carModel extends HTMLElement {
         const nullOwnerOpt = document.createElement('option');
         const otherOwnerOpt = document.createElement('option');
 
+        ownerSelect.dataset.ownerSelection = '';
         ownerLabel.setAttribute('for', 'owner');
         ownerLabel.textContent = 'Owner';
         nullOwnerOpt.value = ''
         nullOwnerOpt.textContent = 'Select a owner';
-        otherOwnerOpt.textContent = '---------Other-------'
+        otherOwnerOpt.textContent = '---------Other-------';
         ownerSelect.setAttribute('name', 'carOwner');
         ownerSelect.setAttribute('required', '');
         ownerSelect.appendChild(nullOwnerOpt)
         ownerSelect.appendChild(otherOwnerOpt);
-
-        //Constructing Select options
-        const ownerList = await this.getCostumerList();
-        // console.log((ownerList));
-        ownerList.forEach(datum => {
-            // console.log(datum);
-            const opt = document.createElement('option');
-            opt.value = datum.cos_Id;
-            opt.textContent = datum.cos_Id.concat("- ", datum.cosName);
-            ownerSelect.appendChild(opt);
-        });
 
         //Year input
         const yearLabel = document.createElement('label');
@@ -241,19 +235,11 @@ class carModel extends HTMLElement {
         vinInput.type = 'text';
         vinInput.placeholder = '4Y1SL65848Z411439';
         vinInput.maxLength = 17;
-        // Send Button
 
+        // Send Button
         const sendButton = document.createElement('button');
         sendButton.textContent = 'Send';
         sendButton.dataset.sendFormButton = '';
-
-        // Object.entries(fixedData).forEach(datum => {
-        //     // console.log(datum);
-        //     const opt = document.createElement('option');
-        //     opt.value = datum[0];
-        //     opt.textContent = datum[0];
-        //     manufacturerSelect.appendChild(opt);
-        // });
 
         // Append once, in proper order
 
@@ -283,38 +269,40 @@ class carModel extends HTMLElement {
 
         formSection.appendChild(container);
         this.shadowRoot.appendChild(formSection);
+        // console.log(fixedData);
 
-        await this.populateOption(fixedData);
-
-        // Populating the Manufacturer and Model Selection
-        manufacturerSelect.addEventListener('change', (e) => {
-            const selectedMan = e.target.value;
-            console.log(selectedMan);
-            // Clear old options (but keep first)
-            modelSelect.length = 1;
-            const models = fixedData[selectedMan];
-            // console.log((models));
-            if (models) {
-                Object.values(models).forEach((carName) => {
-                    // console.log(carName);
-                    const opt = document.createElement('option');
-                    opt.value = carName;
-                    opt.textContent = carName;
-                    modelSelect.appendChild(opt);
-                });
-            }
-        });
         manufacturerSelect.appendChild(otherManufacturerOpt);
+
     }
 
+    async getCarManModel() {
+        const dataRaw = await fetch('/Forms/Car/sendData', {
+            method: 'Get'
+        });
+        const dataRawObj = await dataRaw.json();
+
+        this.sendNotification(dataRawObj,dataRawObj.show);
+        const fixedData = await this.fixJson(dataRawObj.data);
+        this.sendNotification(fixedData, fixedData.show);
+        // console.log(fixedData);
+        return fixedData;
+    }
+    
     async getCostumerList() {
         const dataRaw = await fetch('/Forms/Costumer/SendList', {
             method: 'GET'
         });
         const dataRawObj = await dataRaw.json();
+        this.sendNotification(dataRawObj, dataRawObj.show);
         const fixedData = dataRawObj.data;
-        // console.log(typeof(dataRawObj.data));
-
+        const ownerSelect = this.shadowRoot.querySelector('[data-owner-selection]');
+        fixedData.forEach(datum => {
+            // console.log(datum);
+            const opt = document.createElement('option');
+            opt.value = datum.cos_Id;
+            opt.textContent = datum.cos_Id.concat("- ", datum.cosName);
+            ownerSelect.appendChild(opt);
+        });
         return fixedData;
     }
 
@@ -331,7 +319,7 @@ class carModel extends HTMLElement {
         return fixedJson;
     }
 
-    async populateOption(fixedData) {
+    async populateMan(fixedData) {
         const manufacturerSelect = this.shadowRoot.querySelector('[data-manufacturer-selection]');
         Object.entries(fixedData).forEach(datum => {
             // console.log(datum);
@@ -342,21 +330,37 @@ class carModel extends HTMLElement {
         });
     }
 
-    sendNotification(notification) {
-        console.log('Sending a notification ', notification);
-        this.dispatchEvent(new CustomEvent('notify', {
-            detail: {
-                message: notification.error,
-                data:notification.data,
-                type: notification.type,
+    async sendData2server(data) {
+        const serverRes = await fetch('/Forms/Car/saveData', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            bubbles: true,     // Allows event to bubble up
-            composed: true,
-        }));
+            body: JSON.stringify(data),
+        });
+        const res = await serverRes.json();
+        console.log(res);
+        this.sendNotification(res, res.show);
     }
 
-
+    sendNotification(notification, flag) {
+        console.log('Sending a notification ', notification);
+        if (flag) {
+            this.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    origin: notification.origin,
+                    message: notification.error,
+                    data: notification.data,
+                    type: notification.type,
+                    show: notification.show,
+                },
+                bubbles: true,     // Allows event to bubble up
+                composed: true,
+            }));
+        } 
+    }
 }
+
 
 customElements.define('car-registration-form', carModel);
 

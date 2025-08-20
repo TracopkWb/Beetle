@@ -70,8 +70,6 @@ class Modal extends HTMLElement {
                 const dialog = this.shadowRoot.querySelector('[data-new-car]');
                 // console.log(await sendNewModel);
             dialog.close();
-            } else {
-                console.log(sendNewModel.statusText);
             }
         });
     }
