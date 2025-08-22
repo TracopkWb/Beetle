@@ -12,7 +12,11 @@ router.use(express.json({ limit: "50mb" }));
 
 //Variable Section
 const formPage = path.join(rootPath.__rootDir, 'views', 'costumerRegistration.html');
+const costumerAgendaPage = path.join(rootPath.__rootDir, 'views', 'test', 'costumerAgenda.html');
+const neutralImage = path.join(rootPath.__rootDir, 'public', 'Img', 'customer.png');
 const currDate = new Date();
+let clients = [];
+
 
 const addCostumer = (req, res) => {
     // console.log("url",req.url);
@@ -42,13 +46,13 @@ const gettingData = async (req, res) => {
 const sendCostumers2WebSite = async (req, res) => {
     // const query = await DB.testConnection();
     const query = await fetchCostumerFromDB();
-    console.log(query.data[0]);
+    console.log(query.data);
     try {
         res.status(200).json({
             success: true,
-            data: query.data[0],
+            data: query.data,
             error: null,
-            origin:'sendList-sendCostumer2Website()',
+            origin: 'sendList-sendCostumer2Website()',
         });
     } catch (err) {
         res.status(204).json({
@@ -56,9 +60,62 @@ const sendCostumers2WebSite = async (req, res) => {
             data: null,
             error: err.message,
             error: true,
-            origin:'sendList-sendCostumer2Website()',
+            origin: 'sendList-sendCostumer2Website()',
         });
     }
+}
+
+const getAgenda = async (req, res) => {
+    console.log('Getting the agenda', req.url);
+    const checkDB = await fetchCostumerFromDB();
+    // console.log(checkDB);
+    if (!checkDB.success) {
+        res.status(500).json({
+            success: false,
+            data: checkDB.data,
+            type: checkDB.type,
+            origin: 'getAgenda()-'.concat(checkDB.origin),
+            show: true
+        });
+    } else {
+        res.status(200).json({
+            success: true,
+            data: checkDB.data,
+            type: checkDB.type,
+            origin: 'getAgenda()-'.concat(checkDB.origin),
+            show: true
+        })
+    }
+}
+
+const getUpdate = (req, res) => {
+    console.log('Updating page');
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    clients.push(res);
+
+    req.on("close", () => {
+        clients = clients.filter(c => c !== res);
+    });
+}
+
+const getImage = async (req, res) => {
+    // console.log('Getting images', req.body);
+    console.log('Getting images', req.params.imgId);
+    const img = req.params.imgId;
+    // console.log('Getting images', req._parsedOriginalUrl);
+    // console.log('Getting images', req._parsedOriginalUrl.query);
+    if (img === 'neutral') {
+        res.status(200).sendFile(neutralImage);
+    }
+}
+
+const test = (req, res) => {
+    console.log('Testing the agenda page', req.url);
+    res.sendFile(costumerAgendaPage);
 }
 
 //Exports whatever is above under Express.Router
@@ -66,6 +123,10 @@ export default {
     registration: addCostumer,
     receivingData: gettingData,
     fetchList: sendCostumers2WebSite,
+    getAgenda: getAgenda,
+    getImage: getImage,
+    getUpdate: getUpdate,
+    test: test,
 }
 
 async function sendCostumer2DB(data) {
@@ -82,6 +143,7 @@ async function sendCostumer2DB(data) {
     const query = 'INSERT INTO costumer (cos_id, cosName, cosPhone,cosOtherContacts) values(?,?,?,?)';
     const result = await DB.conn.execute(query, [formatted.id, formatted.name, formatted.phone, formatted.otherContacts]);
     try {
+        notifyUpdate({ msg: "Customer updated", formatted });
         return {
             success: true,
             error: null,
@@ -98,7 +160,17 @@ async function sendCostumer2DB(data) {
 }
 
 async function fetchCostumerFromDB() {
-    const costumerListRaw = await DB.conn.execute('SELECT * FROM costumer');
+    const checkDB = await DB.testConnection();
+    if (!checkDB.success) {
+        return {
+            success: false,
+            data: checkDB.data,
+            type: checkDB.type,
+            origin: 'fetchCostumerFromDB()-'.concat(checkDB.origin),
+            show: true
+        }
+    }
+    const [costumerListRaw] = await DB.conn.execute('SELECT * FROM costumer');
     try {
         return {
             success: true,
@@ -114,4 +186,10 @@ async function fetchCostumerFromDB() {
         }
     }
 
+}
+
+function notifyUpdate(newCustomer) {
+    clients.forEach(res => {
+        res.write(`data: ${JSON.stringify(newCustomer)}\n\n`);
+    });
 }

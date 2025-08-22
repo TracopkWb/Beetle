@@ -7,6 +7,7 @@ import rootPath from '../utilities/uti-path.js';
 import carFile from '../models/mod-car.js';
 import costumerFile from '../models/mod-costumer.js';
 
+
 //Initializing Router
 const router = express.Router();
 router.use(express.json({limit:"50mb"}));
@@ -15,12 +16,12 @@ router.use(express.json({limit:"50mb"}));
 
 
 //Url = http://localhost:3000/Forms/Costumer/Registration
-router.get("/Costumer/Registration",costumerFile.registration);
-router.get("/Costumer/SendList",costumerFile.fetchList);
+router.get("/Customer/Registration",costumerFile.registration);
+router.get("/Customer/SendList",costumerFile.fetchList);
 
 // router.get("/Costumer/Registration",costumerFile.registration);
-router.post("/Costumer/Data",costumerFile.receivingData);
-router.post("/Costumer/Registration",(req,res)=>{
+router.post("/Customer/Data",costumerFile.receivingData);
+router.post("/Customer/Registration",(req,res)=>{
 
 });
 
@@ -32,7 +33,6 @@ router.post('/Car/newAddition/newCar', carFile.addNewCarData);
 
 //Testing new pages
 // router.get('/Car/newAddition', carFile.test);
-router.get('/Costumer/Agenda', carFile.test);
 
 router.get('/', (req, res, next) => {
     console.log(req.url);

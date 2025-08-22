@@ -311,6 +311,6 @@ FROM costumer
 JOIN car ON costumer.`cos_Id` = car.`cos_Id`;
 
 
-
-
+SELECT * FROM models WHERE `man_Id` = 80;
+SELECT * FROM manufacturers WHERE `manName` = 'Dodge';
 

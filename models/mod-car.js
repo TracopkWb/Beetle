@@ -153,7 +153,7 @@ const addCarData = async (req, res) => {
 const test = async (req, res) => {
     console.log('Testing the car Addition page');
     res.status(200);
-    res.sendFile(carAdditionPage);
+    // res.sendFile(costumerAgendaPage);
 }
 
 

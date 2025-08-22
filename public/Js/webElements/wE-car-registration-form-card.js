@@ -16,7 +16,7 @@ class carModel extends HTMLElement {
         const carData = await this.getCarManModel();
         await this.populateMan(carData);
         await this.getCostumerList();
-        // // console.log(carData);
+        // console.log(carData);
 
         const manufacturerSelect = this.shadowRoot.querySelector('[data-manufacturer-selection]');
         const modelSelect = this.shadowRoot.querySelector('[data-model-selection]');
@@ -293,10 +293,11 @@ class carModel extends HTMLElement {
     }
     
     async getCostumerList() {
-        const dataRaw = await fetch('/Forms/Costumer/SendList', {
+        const dataRaw = await fetch('/Forms/Customer/SendList', {
             method: 'GET'
         });
         const dataRawObj = await dataRaw.json();
+        // console.log(dataRawObj);
         this.sendNotification(dataRawObj, dataRawObj.show);
         const fixedData = dataRawObj.data;
         const ownerSelect = this.shadowRoot.querySelector('[data-owner-selection]');

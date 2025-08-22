@@ -10,10 +10,14 @@ sendButton.addEventListener('click', async (e) => {
     // alert(1);
     e.preventDefault();
     const formData = new FormData(costumerForm);
+    if (!costumerForm.checkValidity()) {
+        costumerForm.reportValidity();
+        return;
+    }
     const costumerData = Object.fromEntries(formData.entries());
     console.log(formData, costumerData);
 
-    const sendingData = await fetch('/Forms/Costumer/Data', {
+    const sendingData = await fetch('/Forms/Customer/Data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -23,6 +27,7 @@ sendButton.addEventListener('click', async (e) => {
 
     const res = await sendingData.json();
     console.log(res);
+    costumerForm.reset();
 });
 
 const phoneInput = document.getElementById('phoneInput');
