@@ -5,6 +5,7 @@ import DB from '../utilities/uti-db.js'
 
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
+import ownerClass from '../controllers/Classes/Owner.js';
 
 //Initializing Router
 const router = express.Router();
@@ -32,13 +33,19 @@ const gettingData = async (req, res) => {
         res.json({
             success: sqlQuery.success,
             received: sqlQuery.data,
+            // data: query.data,
             error: null,
+            origin: 'gettingData()',
+            show: false,
         });
     } catch (err) {
         res.json({
             success: false,
             received: null,
             error: err.message,
+            origin: 'gettingData()',
+            type: 'notification-gettingData()',
+            show: true,
         });
     }
 }
@@ -52,15 +59,18 @@ const sendCostumers2WebSite = async (req, res) => {
             success: true,
             data: query.data,
             error: null,
+            type: query.type,
             origin: 'sendList-sendCostumer2Website()',
+            show: false,
         });
     } catch (err) {
         res.status(204).json({
             success: false,
             data: null,
             error: err.message,
-            error: true,
+            type: query.type,
             origin: 'sendList-sendCostumer2Website()',
+            show: true,
         });
     }
 }
@@ -75,7 +85,7 @@ const getAgenda = async (req, res) => {
             data: checkDB.data,
             type: checkDB.type,
             origin: 'getAgenda()-'.concat(checkDB.origin),
-            show: true
+            show: true,
         });
     } else {
         res.status(200).json({
@@ -113,6 +123,38 @@ const getImage = async (req, res) => {
     }
 }
 
+const deleteCustomer = async (req, res) => {
+    console.log('Deleting customer');
+    const cus2Delete = ownerClass.search4Owner(req.params.customerId);
+    const response = await cus2Delete;
+    console.log("response:", response.data);
+    const cus = ownerClass.buildObject(response.data);
+    console.log("Customer to delete: ", cus.toJSON());
+    const deleteQuery = await cus.deleteCustomer();
+    if (deleteQuery.success) {
+         res.status(200).json({
+            success: true,
+            data: deleteQuery.data,
+            error: null,
+            type: deleteQuery.type,
+            origin: deleteQuery.origin.concat('-deleteCostumer()'),
+            show: true,
+        });
+    } else {
+        res.status(500).json({
+            success: false,
+            data: deleteQuery.data,
+            error: null,
+            type: deleteQuery.type,
+            origin: deleteQuery.origin.concat('-deleteCostumer()'),
+            show: true,
+        });
+    }
+       
+
+
+}
+
 const test = (req, res) => {
     console.log('Testing the agenda page', req.url);
     res.sendFile(costumerAgendaPage);
@@ -126,6 +168,7 @@ export default {
     getAgenda: getAgenda,
     getImage: getImage,
     getUpdate: getUpdate,
+    deleteCustomer: deleteCustomer,
     test: test,
 }
 

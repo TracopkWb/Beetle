@@ -1,16 +1,16 @@
+import DB from '../../utilities/uti-db.js';
 export default class Owner {
     //Attributes
     #owId;
     #owName;
     #owPhoneNum;
-    #owEmail;
+    #owEmail = null;
     #owOtherContacts = [];
 
-    constructor(owId, owName, owPhoneNum, owEmail,owOtherContact = []) {
+    constructor(owId, owName, owPhoneNum, owOtherContact = []) {
         this.#owId = owId;
         this.#owName = owName;
         this.#owPhoneNum = owPhoneNum;
-        this.#owEmail = owEmail;
         this.#owOtherContacts = owOtherContact;
     }
 
@@ -58,14 +58,70 @@ export default class Owner {
     }
 
 
+    async deleteCustomer() {
+        console.log("Deleting Customer:", this.toJSON());
+        const deleteQuery = `DELETE FROM costumer WHERE cos_Id = ?`;
+        // console.log(this.getOwnerId);
+        try {
+            DB.conn.execute(deleteQuery, [this.getOwnerId]);
+            return {
+                success: true,
+                data: `Customer ${this.#owId} deleted`,
+                error: null,
+                type: 'notification-deleteCustomer',
+                origin: 'OwnerClass-deleteCustomer()',
+                show: true,
+            }
+        } catch (err) {
+            return {
+                success: false,
+                data: `Customer ${this.#owId} deleted`,
+                error: err,
+                type: 'error-deleteCustomer',
+                origin: 'OwnerClass-deleteCustomer()',
+                show: true,
+            }
+        }
+    }
+
     //static Methods
     static buildObject(obj) {
+        // console.log(obj);
         return new Owner(
-            obj.id,
-            obj.name,
-            obj.phone,
-            obj.email
+            obj['cos_Id'],
+            obj.cosName,
+            obj.cosPhone,
         );
+    }
+
+    static async search4Owner(id) {
+        const checkDB = await DB.testConnection();
+        if (!checkDB.success) {
+            return {
+                success: false,
+                data: checkDB.data,
+                type: checkDB.type,
+                origin: 'fetchCostumerFromDB()-'.concat(checkDB.origin),
+                show: true
+            }
+        }
+        const searchQuery = `SELECT * FROM costumer WHERE cos_Id = ?`;
+        const [costumerListRaw] = await DB.conn.execute(searchQuery, [id]);
+        // console.log(customerListRaw, Owner.buildObject(costumerListRaw));
+        try {
+            return {
+                success: true,
+                data: costumerListRaw[0],
+                error: null,
+            }
+        } catch (err) {
+            // console.log(err);
+            return {
+                success: false,
+                data: null,
+                error: err,
+            }
+        }
     }
 
 }

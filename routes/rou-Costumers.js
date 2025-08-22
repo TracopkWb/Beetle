@@ -16,6 +16,8 @@ router.use(express.json({ limit: "50mb" }));
 router.get('/Agenda', customerFile.test);
 //URL-> Customers/getCostumers
 router.get('/getCustomers', customerFile.getAgenda);
+//URL-> Customers/Delete/:id
+router.delete('/Delete/:customerId', customerFile.deleteCustomer);
 
 //URL-> /Customers/updateCustomers
 router.get('/events',customerFile.getUpdate);

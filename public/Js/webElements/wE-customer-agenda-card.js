@@ -13,36 +13,40 @@ class customerAgenda extends HTMLElement {
         this.cardContainerResult = document.createElement('div');
         this.cardContainerResult.classList.add('customer-grid');
         this.cardContainerResult.dataset.cardContainerResult = '';
-        // this.shadowRoot.append(this.cardContainerResult);
+
     }
 
 
     connectedCallback() {
-        // this.render();
+        this.shadowRoot.addEventListener('click', (e) => {
+            let customerId;
+            if (e.target.matches('[data-action="edit"]')) {
+                customerId = e.target.closest('[data-card-container]').dataset.costumerId;
+                console.log("Clicked edit",customerId);
+            }
+            if (e.target.matches('[data-action="view"]')) {
+                customerId = e.target.closest('[data-card-container]').dataset.costumerId;
+                console.log("Clicked view",customerId);
+            }
+            if (e.target.matches('[data-action="delete"]')) {
+                customerId = e.target.closest('[data-card-container]').dataset.costumerId;
+                console.log("Clicked delete",customerId);
+                this.deleteCustomer(customerId);
+            }
+        });
     }
 
     set data(cusData) {
-        // this.render(cusData);
-        // // console.log("Project Data: ", projectData);
         Object.values(cusData).forEach(cus => {
-            // console.log(cus);
             this.cardContainerResult.appendChild(this.createCard(cus));
         });
         this.shadowRoot.appendChild(this.cardContainerResult);
     }
-    
+
     set newData(newCus) {
         // console.log(newCus);
         this.cardContainerResult.appendChild(this.createCard(newCus));
         this.shadowRoot.appendChild(this.cardContainerResult);
-    }
-
-    async getAgenda() {
-        const getCostumers = await fetch('/Costumers/getCostumers', {
-            method: 'GET'
-        });
-        const res = await getCostumers.json();
-        return res;
     }
 
     createCard(cus) {
@@ -109,6 +113,16 @@ class customerAgenda extends HTMLElement {
         customerCard.appendChild(cusActionBtnDiv);
 
         return customerCard;
+    }
+
+    async deleteCustomer(customer){
+        console.log(customer);
+        const del = await fetch(`/Customers/Delete/${customer}`,{
+                method: 'Delete'
+            }
+        );
+        const res = await del.json();
+        console.log(res);
     }
 }
 

@@ -7,6 +7,8 @@ import cors from "cors";
 import rootDir from './utilities/uti-path.js';
 import forms from "./routes/rou-Forms.js";
 import costumer from './routes/rou-Costumers.js';
+import controller from './routes/rou-Controllers.js';
+import utilities from './routes/rou-Utilities.js';
 
 //Modules
 
@@ -29,6 +31,8 @@ app.get("/",(req,res,next)=>{
 //ALWAYS USE app.use to reroute!!!!
 app.use("/Forms",forms.route);
 app.use("/Customers",costumer.route);
+app.use("/controllers",controller.route);
+app.use("/utilities",utilities.route);
 // app.get("/CostumerForm",beetle.route);
 
 
