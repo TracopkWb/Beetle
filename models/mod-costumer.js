@@ -5,7 +5,7 @@ import DB from '../utilities/uti-db.js'
 
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
-import ownerClass from '../controllers/Classes/Owner.js';
+import ownerClass from '../controllers/Classes/Customer.js';
 
 //Initializing Router
 const router = express.Router();
@@ -131,8 +131,17 @@ const deleteCustomer = async (req, res) => {
     const cus = ownerClass.buildObject(response.data);
     console.log("Customer to delete: ", cus.toJSON());
     const deleteQuery = await cus.deleteCustomer();
+    const customer = deleteQuery.data;
+    console.log("delete query", deleteQuery);
     if (deleteQuery.success) {
-         res.status(200).json({
+        notifyUpdate({
+            success: deleteQuery.success,
+            data: deleteQuery.data,
+            type: deleteQuery.type,
+            origin: 'notification-'.concat(deleteQuery.origin),
+            show: deleteQuery.show,
+        });
+        res.status(200).json({
             success: true,
             data: deleteQuery.data,
             error: null,
@@ -146,11 +155,11 @@ const deleteCustomer = async (req, res) => {
             data: deleteQuery.data,
             error: null,
             type: deleteQuery.type,
-            origin: deleteQuery.origin.concat('-deleteCostumer()'),
+            origin: deleteQuery.origin.concat('-delete-Costumer()'),
             show: true,
         });
     }
-       
+
 
 
 }
@@ -176,23 +185,32 @@ async function sendCostumer2DB(data) {
     const formattedCosId = data.cos_fName.toString().slice(0, 2).concat(data.cos_lName.toString().slice(0, 2).concat(data.cos_Phone.toString().slice(8, 12))),
         formattedCosName = data.cos_fName.toString().concat(" ", data.cos_lName.toString()),
         formattedCosPhone = data.cos_Phone.toString().replaceAll("-", "");
-
     const formatted = {
-        id: formattedCosId,
-        name: formattedCosName,
-        phone: formattedCosPhone,
-        otherContacts: null
+        cos_Id: formattedCosId,
+        cosName: formattedCosName,
+        cosPhone: formattedCosPhone,
+        //     otherContacts: null
     }
-    const query = 'INSERT INTO costumer (cos_id, cosName, cosPhone,cosOtherContacts) values(?,?,?,?)';
-    const result = await DB.conn.execute(query, [formatted.id, formatted.name, formatted.phone, formatted.otherContacts]);
+    const customerFormatted = ownerClass.buildObject(formatted);
+    // console.log("Customer sent 2 DB: ", customerFormatted.toJSON());
+    const query = 'INSERT INTO costumer (cos_id, cosName, cosPhone) values(?,?,?)';
     try {
-        notifyUpdate({ msg: "Customer updated", formatted });
+        const result = await DB.conn.execute(query, [customerFormatted.getOwnerId, customerFormatted.getOwnerName, customerFormatted.getOwnerPhoneNumber]);
+        // console.log(result);
+        notifyUpdate({
+            success: true,
+            data: customerFormatted.toJSON(),
+            type: 'notification-add-Costumer',
+            origin: 'sendCustomer2DDB()',
+            show: true,
+        });
         return {
             success: true,
             error: null,
             data: formatted,
         }
     } catch (err) {
+        console.log(err);
         return {
             success: false,
             error: err.message,
@@ -232,6 +250,7 @@ async function fetchCostumerFromDB() {
 }
 
 function notifyUpdate(newCustomer) {
+    console.log(newCustomer);
     clients.forEach(res => {
         res.write(`data: ${JSON.stringify(newCustomer)}\n\n`);
     });

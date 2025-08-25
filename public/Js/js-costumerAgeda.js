@@ -2,85 +2,9 @@
 const mainContainer = document.querySelector('[data-costumer-container]');
 const filterContainer = document.querySelector('[data-costumer-container]');
 const cardContainer = document.querySelector('[data-costumer-card-result]');
-const cardContainerWE = document.querySelector('customer-agenda-card');
+const cardContainerWE = document.querySelector('customer-agenda-result-card');
 
 console.log(mainContainer, filterContainer, cardContainer, cardContainerWE);
-
-// const getAgenda = async () => {
-//     const getCostumers = await fetch('/Costumers/getCostumers', {
-//         method: 'GET'
-//     });
-//     const res = await getCostumers.json();
-//     console.log(typeof (res.data));
-//     Object.entries(res.data).forEach(cus => {
-//         // console.log(cus[1]);
-//         //Costumer card
-//         const customerCard = document.createElement('div');
-//         customerCard.classList.add('customer-card');
-//         customerCard.dataset.costumerId = cus[1]['cos_Id'];
-
-//         //Costumer Photo
-//         const cusAvatar = document.createElement('img');
-//         cusAvatar.classList.add('customer-avatar');
-//         cusAvatar.src = './getImage/neutral';
-//         cusAvatar.alt = cus[1]['cos_Id'].concat('-avatar');
-
-//         //Customer info div
-//         const cusInfoDiv = document.createElement('div');
-//         cusInfoDiv.classList.add('customer-info');
-//         const cusName = document.createElement('h3');
-//         const cusNumber = document.createElement('p');
-
-//         cusName.textContent = cus[1].cosName;
-//         cusName.classList.add('customer-name');
-
-//         cusNumber.textContent = cus[1].cosPhone;
-//         cusNumber.classList.add('customer-phone');
-
-//         //Customer actions Div
-//         const cusActionBtnDiv = document.createElement('div');
-//         cusActionBtnDiv.classList.add('customer-actions');
-
-//         //buttons actions
-//         const editBtn = document.createElement('button');
-//         const viewBtn = document.createElement('button');
-//         const deleteBtn = document.createElement('button');
-
-//         editBtn.textContent = 'Edit';
-//         editBtn.classList.add('btn');
-//         editBtn.classList.add('edit');
-//         editBtn.dataset.action = 'edit';
-
-//         viewBtn.textContent = 'view';
-//         viewBtn.classList.add('btn');
-//         viewBtn.classList.add('view');
-//         viewBtn.dataset.action = 'view';
-
-//         deleteBtn.textContent = 'Delete';
-//         deleteBtn.classList.add('btn');
-//         deleteBtn.classList.add('delete');
-//         deleteBtn.dataset.action = 'delete';
-
-
-//         //Appending
-
-//         cusInfoDiv.appendChild(cusName);
-//         cusInfoDiv.appendChild(cusNumber);
-
-//         cusActionBtnDiv.appendChild(editBtn);
-//         cusActionBtnDiv.appendChild(viewBtn);
-//         cusActionBtnDiv.appendChild(deleteBtn);
-
-//         customerCard.appendChild(cusAvatar);
-//         customerCard.appendChild(cusInfoDiv);
-//         customerCard.appendChild(cusActionBtnDiv);
-
-//         cardContainer.appendChild(customerCard);
-//     })
-
-// }
-// // getAgenda();
-
 
 const getAgenda2 = async () => {
     const getCostumers = await fetch('/Customers/getCustomers', {
@@ -93,16 +17,69 @@ const getAgenda2 = async () => {
 }
 getAgenda2();
 
-const evtSource = new EventSource("./events");
 
-evtSource.onmessage = (event) => {
-    const data = JSON.parse(event.data);
-    console.log(data);
-    const newCustomer = {
-        cos_Id: data.formatted.id,
-        cosName: data.formatted.name,
-        cosPhone: data.formatted.phone,
+document.addEventListener("notify", (e) => {
+    // console.log(e);
+    console.log(e.detail);
+    showNotification(e.detail.type, e.detail.message, e.detail.data, e.detail.origin);
+});
+function showNotification(notification, data) {
+    const container = document.getElementById("notifications-container");
+    console.log(notification.type.split('-')[1]);
+    const not = document.createElement("div");
+    if (notification.type.split('-')[1] == 'error') {
+        not.textContent = `${notification.data}`;
+        not.style.backgroundColor = "#ec0101e7";
+
+    } if (notification.type.split('-')[1] === 'delete') {
+        not.textContent = `The customer ${notification.data.cosName} has been deleted`;
+        not.style.backgroundColor = "#e64514e7";
+    } if (notification.type.split('-')[1] === 'add') {
+        // console.log(data);
+        not.textContent = `The customer ${notification.data.cosName} has been saved`;
+        not.style.backgroundColor = "#4caf50";
     }
-    console.log(newCustomer);
-    cardContainerWE.newData = newCustomer;
+    not.style.cssText = `
+        color: white;
+        padding: 10px 20px;
+        margin-top: 10px;
+        border-radius: 8px;
+        font-family: sans-serif;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    `;
+
+    container.appendChild(not);
+
+    // Fade in
+    setTimeout(() => {
+        not.style.opacity = "1";
+    }, 10);
+
+    // Remove after 10 sec
+    setTimeout(() => {
+        not.style.opacity = "0";
+        setTimeout(() => not.remove(), 500);
+    }, 2000);
+}
+const evtSource = new EventSource("./events");
+evtSource.onmessage = (event) => {
+    const notification = JSON.parse(event.data);
+    const notificationType = notification.type.split('-')[1];
+    console.log(notification, notificationType);
+    switch (notificationType) {
+        case 'add':
+            cardContainerWE.newData = notification.data;
+            showNotification(notification, notification.show);
+            break;
+        case 'delete':
+            cardContainerWE.removeCustomer = notification.data;
+            showNotification(notification, notification.show);
+            break;
+
+        default:
+            break;
+    }
+
 };

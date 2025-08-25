@@ -22,15 +22,15 @@ class customerAgenda extends HTMLElement {
             let customerId;
             if (e.target.matches('[data-action="edit"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
-                console.log("Clicked edit",customerId);
+                console.log("Clicked edit", customerId);
             }
             if (e.target.matches('[data-action="view"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
-                console.log("Clicked view",customerId);
+                console.log("Clicked view", customerId);
             }
             if (e.target.matches('[data-action="delete"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
-                console.log("Clicked delete",customerId);
+                // console.log("Clicked delete",customerId,e.target.closest('[data-card-container]'));
                 this.deleteCustomer(customerId);
             }
         });
@@ -49,17 +49,29 @@ class customerAgenda extends HTMLElement {
         this.shadowRoot.appendChild(this.cardContainerResult);
     }
 
+    set removeCustomer(customer) {
+        // console.log(customer, typeof (this.cardContainerResult.childNodes));
+        Object.entries(this.cardContainerResult.childNodes).forEach(child => {
+            // console.log(child[1].dataset.costumerId,customer['cos_Id']);
+            if (child[1].dataset.costumerId === customer['cos_Id']) {
+                child[1].remove();
+            }
+        });
+    }
+
     createCard(cus) {
         //Costumer card
         const customerCard = document.createElement('div');
         customerCard.classList.add('customer-card');
         customerCard.dataset.cardContainer = '';
+
         customerCard.dataset.costumerId = cus['cos_Id'];
 
         //Costumer Photo
         const cusAvatar = document.createElement('img');
         cusAvatar.classList.add('customer-avatar');
         cusAvatar.src = './getImage/neutral';
+
         cusAvatar.alt = cus['cos_Id'].concat('-avatar');
 
         //Customer info div
@@ -67,12 +79,11 @@ class customerAgenda extends HTMLElement {
         cusInfoDiv.classList.add('customer-info');
         const cusName = document.createElement('h3');
         const cusNumber = document.createElement('p');
+        cusName.classList.add('customer-name');
+        cusNumber.classList.add('customer-phone');
 
         cusName.textContent = cus.cosName;
-        cusName.classList.add('customer-name');
-
         cusNumber.textContent = cus.cosPhone;
-        cusNumber.classList.add('customer-phone');
 
         //Customer actions Div
         const cusActionBtnDiv = document.createElement('div');
@@ -115,18 +126,20 @@ class customerAgenda extends HTMLElement {
         return customerCard;
     }
 
-    async deleteCustomer(customer){
+    async deleteCustomer(customer) {
         console.log(customer);
-        const del = await fetch(`/Customers/Delete/${customer}`,{
-                method: 'Delete'
-            }
+        const del = await fetch(`/Customers/Delete/${customer}`, {
+            method: 'Delete'
+        }
         );
         const res = await del.json();
-        console.log(res);
+        // console.log(res);
+        // this.sendNotification(res,res.show);
     }
+
 }
 
 ////////////////Remember to change the type= module in the html file
-customElements.define('customer-agenda-card', customerAgenda);
+customElements.define('customer-agenda-result-card', customerAgenda);
 
 

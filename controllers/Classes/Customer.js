@@ -1,59 +1,59 @@
 import DB from '../../utilities/uti-db.js';
-export default class Owner {
+export default class Costumer {
     //Attributes
-    #owId;
-    #owName;
-    #owPhoneNum;
-    #owEmail = null;
-    #owOtherContacts = [];
+    #cos_Id;
+    #cosName;
+    #cosPhone;
+    #cosEmail = null;
+    #cosOtherPhone = [];
 
     constructor(owId, owName, owPhoneNum, owOtherContact = []) {
-        this.#owId = owId;
-        this.#owName = owName;
-        this.#owPhoneNum = owPhoneNum;
-        this.#owOtherContacts = owOtherContact;
+        this.#cos_Id = owId;
+        this.#cosName = owName;
+        this.#cosPhone = owPhoneNum;
+        this.#cosOtherPhone = owOtherContact;
     }
 
     //Setters
-    set setOwnerId(owId) {
-        this.#owId = owId;
+    set setOwnerId(cos_Id) {
+        this.#cos_Id = cos_Id;
     }
 
-    set setOwnerName(owName) {
-        this.owName = owName;
+    set setOwnerName(cosName) {
+        this.owName = cosName;
 
     }
-    set setOwnerPhoneNumber(owPhoneNum) {
-        this.#owPhoneNum = owPhoneNum;
+    set setOwnerPhoneNumber(cosPhone) {
+        this.#cosPhone = cosPhone;
     }
 
-    set setOwnerEmail(owEmail) {
-        this.#owEmail = owEmail;
+    set setOwnerEmail(cosEmail) {
+        this.#cosEmail = cosEmail;
     }
 
     //Getters
     get getOwnerId() {
-        return this.#owId;
+        return this.#cos_Id;
     }
 
     get getOwnerName() {
-        return this.#owName;
+        return this.#cosName;
     }
 
     get getOwnerPhoneNumber() {
-        return this.#owPhoneNum;
+        return this.#cosPhone;
     }
 
     get getOwnerEmail() {
-        return this.#owEmail;
+        return this.#cosEmail;
     }
     //Methods
     toJSON() {
         return {
-            owId: this.getOwnerId,
-            owName: this.getOwnerName,
-            owPhoneNum: this.getOwnerPhoneNumber,
-            owEmail: this.getOwnerEmail,
+            cos_Id: this.getOwnerId,
+            cosName: this.getOwnerName,
+            cosPhone: this.getOwnerPhoneNumber,
+            // cosEmail: this.getOwnerEmail,
         }
     }
 
@@ -66,16 +66,16 @@ export default class Owner {
             DB.conn.execute(deleteQuery, [this.getOwnerId]);
             return {
                 success: true,
-                data: `Customer ${this.#owId} deleted`,
+                data: this,
                 error: null,
-                type: 'notification-deleteCustomer',
-                origin: 'OwnerClass-deleteCustomer()',
+                type: 'notification-delete-Customer()',
+                origin: 'delete-OwnerClass-deleteCustomer()',
                 show: true,
             }
         } catch (err) {
             return {
                 success: false,
-                data: `Customer ${this.#owId} deleted`,
+                data: `Customer ${this.#cos_Id} deleted`,
                 error: err,
                 type: 'error-deleteCustomer',
                 origin: 'OwnerClass-deleteCustomer()',
@@ -86,8 +86,8 @@ export default class Owner {
 
     //static Methods
     static buildObject(obj) {
-        // console.log(obj);
-        return new Owner(
+        // console.log("buildObject: ",obj);
+        return new Costumer(
             obj['cos_Id'],
             obj.cosName,
             obj.cosPhone,
