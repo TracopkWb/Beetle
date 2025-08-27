@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <title>_title</title>
+    <meta charset="UTF-8" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Search for Customer" />
+    <!-- <meta property="og:image" content="_Image"> -->
+    <meta property="og:type" content="image/png" />
+    <meta property="og:image:width" content="500" />
+    <meta property="og:image:height" content="500" />
+    <meta property="og:description" content="Page to find a customer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <meta name="theme-color" content="_color"> -->
+    <!-- <link rel="icon" type="image/x-icon" href="../Img/"> -->
+    <!-- <link href="" rel="stylesheet" type="text/css"> -->
+  </head>
+
+  <body>
+    <input
+      type="text"
+      id="search"
+      placeholder="Search by name, plate, or phone..."
+    />
+    <ul id="results">
+    </ul>
+    <input type="button" name="" id="reload" value="Send" />
+    <customer-agenda-result-card></customer-agenda-result-card>
+  </body>
+  <script type="module" src="/Js/webElements/wE-customer-agenda-card.js"></script>
+<script type="text/javascript" src="/Js/test/searchBar.js"></script>
+</html>

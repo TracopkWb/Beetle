@@ -1,3 +1,5 @@
+// import '../../utilities/uti-hash.js';
+import Hash from '../../utilities/uti-hash.js';
 import DB from '../../utilities/uti-db.js';
 export default class Costumer {
     //Attributes
@@ -122,6 +124,78 @@ export default class Costumer {
                 error: err,
             }
         }
+    }
+
+    static lastHashed = null; // store last hash globally in class
+    static async getAllCustomers(hash) {
+        let cusList = [];
+        let currentHashed;
+        console.log('Getting all customers from DB');
+        const checkDB = await DB.testConnection();
+        if (!checkDB.success) {
+            return {
+                success: checkDB.success,
+                data: checkDB.data,
+                type: checkDB.type,
+                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+                error: checkDB.error,
+                show: true,
+                hash: null,
+            }
+        }
+
+        try {
+            const [costumerListRaw] = await DB.conn.execute('SELECT * FROM costumer');
+            // console.log(typeof (costumerListRaw));
+
+            for (const nCus of costumerListRaw) {
+                const newCus = this.buildObject(nCus);
+                cusList.push(newCus);
+            }
+            // console.log(cusList);
+            //Hashing data to make sure indexDB in browser is upto date
+            // currentHashed = generateHash(cusList);
+            currentHashed = Hash.generateHash(cusList);
+            // console.log('hash', currentHashed);
+            this.lastHashed = currentHashed;
+            if (hash === null || hash === this.lastHashed) {
+                console.log('The data is upto date');
+                return {
+                    success: true,
+                    data: 'Data upto date',
+                    error: 'uptoDate',
+                    type: 'notification-get-Customers',
+                    origin: 'CustomersClass-getAllCustomers()-hash',
+                    show: false,
+                    hash: this.lastHashed,
+                }
+            }
+            return {
+                success: true,
+                data: cusList,
+                error: null,
+                type: 'notification-getCustomers',
+                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+                show: false,
+                hash: currentHashed,
+            }
+        } catch (err) {
+            // console.log(err);
+            return {
+                success: false,
+                data: 'No customers found, check XAMPP',
+                error: err.message,
+                type: 'error-getCustomers',
+                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+                show: true,
+                hash: null,
+            }
+
+        }
+    }
+
+    static async getSpecificCustomer(customerId) {
+
     }
 
 }

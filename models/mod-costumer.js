@@ -6,6 +6,8 @@ import DB from '../utilities/uti-db.js'
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
 import ownerClass from '../controllers/Classes/Customer.js';
+import  "../utilities/uti-hash.js";
+
 
 //Initializing Router
 const router = express.Router();
@@ -15,6 +17,8 @@ router.use(express.json({ limit: "50mb" }));
 const formPage = path.join(rootPath.__rootDir, 'views', 'costumerRegistration.html');
 const costumerAgendaPage = path.join(rootPath.__rootDir, 'views', 'test', 'costumerAgenda.html');
 const neutralImage = path.join(rootPath.__rootDir, 'public', 'Img', 'customer.png');
+const customerFindPage = path.join(rootPath.__rootDir, 'views', 'test', 'customerFinder.html');
+
 const currDate = new Date();
 let clients = [];
 
@@ -75,6 +79,10 @@ const sendCostumers2WebSite = async (req, res) => {
     }
 }
 
+const getAgendaPage = async (req, res) => {
+    console.log('Getting the agenda Page', req.url);
+    res.sendFile(costumerAgendaPage);
+}
 const getAgenda = async (req, res) => {
     console.log('Getting the agenda', req.url);
     const checkDB = await fetchCostumerFromDB();
@@ -164,9 +172,37 @@ const deleteCustomer = async (req, res) => {
 
 }
 
-const test = (req, res) => {
-    console.log('Testing the agenda page', req.url);
-    res.sendFile(costumerAgendaPage);
+const test = async (req, res) => {
+    console.log('Testing Customer finder page', req.url);
+    res.sendFile(customerFindPage);
+}
+
+const getCustomerList = async (req, res) => {
+    console.log("aaaaaaaa",req._parsedOriginalUrl.query.split('=')[1]);
+    const lastHashed = req._parsedOriginalUrl.query.split('=')[1];
+    const check4Customers = ownerClass.getAllCustomers(lastHashed);
+    if ((await check4Customers).error === 'uptoDate') {
+        res.status(200).json({
+        success: false,
+        data: (await check4Customers).data,
+        error: (await check4Customers).error,
+        type: 'notification-get-Customers',
+        origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+        show: false,
+        hash:(await check4Customers).hash,
+    }); 
+    } else {
+        res.status(200).json({
+        success: (await check4Customers).success,
+        data: (await check4Customers).data,
+        error: (await check4Customers).error,
+        type: 'notification-get-Customers',
+        origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+        show: false,
+        hash:(await check4Customers).hash,
+    });    
+    }
+    
 }
 
 //Exports whatever is above under Express.Router
@@ -174,10 +210,12 @@ export default {
     registration: addCostumer,
     receivingData: gettingData,
     fetchList: sendCostumers2WebSite,
+    getAgendaPage: getAgendaPage,
     getAgenda: getAgenda,
     getImage: getImage,
     getUpdate: getUpdate,
     deleteCustomer: deleteCustomer,
+    getCustomerList: getCustomerList,
     test: test,
 }
 

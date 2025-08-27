@@ -5,10 +5,13 @@ import cors from "cors";
 
 //Utilities dependencies
 import rootDir from './utilities/uti-path.js';
+//Routes
 import forms from "./routes/rou-Forms.js";
 import costumer from './routes/rou-Costumers.js';
-import controller from './routes/rou-Controllers.js';
-import utilities from './routes/rou-Utilities.js';
+import admin from './routes/rou-Admin.js'
+//
+// import controller from './routes/rou-Controllers.js';
+// import utilities from './routes/rou-Utilities.js';
 
 //Modules
 
@@ -31,8 +34,8 @@ app.get("/",(req,res,next)=>{
 //ALWAYS USE app.use to reroute!!!!
 app.use("/Forms",forms.route);
 app.use("/Customers",costumer.route);
-app.use("/controllers",controller.route);
-app.use("/utilities",utilities.route);
+app.use("/Admin",admin.route);
+
 // app.get("/CostumerForm",beetle.route);
 
 

@@ -30,13 +30,15 @@ class customerAgenda extends HTMLElement {
             }
             if (e.target.matches('[data-action="delete"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
-                // console.log("Clicked delete",customerId,e.target.closest('[data-card-container]'));
+                console.log("Clicked delete",customerId);
                 this.deleteCustomer(customerId);
+                this.removeCustomer(customerId);
             }
         });
     }
 
     set data(cusData) {
+        console.log(cusData);
         Object.values(cusData).forEach(cus => {
             this.cardContainerResult.appendChild(this.createCard(cus));
         });
@@ -49,13 +51,22 @@ class customerAgenda extends HTMLElement {
         this.shadowRoot.appendChild(this.cardContainerResult);
     }
 
-    set removeCustomer(customer) {
-        // console.log(customer, typeof (this.cardContainerResult.childNodes));
-        Object.entries(this.cardContainerResult.childNodes).forEach(child => {
-            // console.log(child[1].dataset.costumerId,customer['cos_Id']);
-            if (child[1].dataset.costumerId === customer['cos_Id']) {
-                child[1].remove();
+    removeCustomers(){
+        Array.from(this.cardContainerResult.children).forEach(child => {
+            // console.log(child[1].attributes[2].value);
+            child.remove();
+            
+        });
+    }
+
+    removeCustomer(customerId){
+        // console.log(customerId,this.cardContainerResult.children);
+         Array.from(this.cardContainerResult.children).forEach(child => {
+            console.log(child.attributes[2].value);
+            if (child.attributes[2].value === customerId) {
+                child.remove();
             }
+            
         });
     }
 

@@ -4,7 +4,7 @@ const filterContainer = document.querySelector('[data-costumer-container]');
 const cardContainer = document.querySelector('[data-costumer-card-result]');
 const cardContainerWE = document.querySelector('customer-agenda-result-card');
 
-console.log(mainContainer, filterContainer, cardContainer, cardContainerWE);
+console.log(mainContainer, filterContainer, cardContainerWE, cardContainerWE);
 
 const getAgenda2 = async () => {
     const getCostumers = await fetch('/Customers/getCustomers', {
@@ -74,12 +74,11 @@ evtSource.onmessage = (event) => {
             showNotification(notification, notification.show);
             break;
         case 'delete':
-            cardContainerWE.removeCustomer = notification.data;
+            cardContainerWE.removeCustomer(notification.data['cos_Id']);
             showNotification(notification, notification.show);
             break;
 
         default:
             break;
     }
-
 };

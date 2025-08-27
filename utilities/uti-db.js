@@ -31,6 +31,7 @@ const test = async function testDBConnection() {
             type: 'error',
             origin: 'testDBConnection()',
             show: true,
+            error: err.message,
         }
     }
 }
