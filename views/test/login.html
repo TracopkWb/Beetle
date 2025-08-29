@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <title>_title</title>
+    <meta charset="UTF-8" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="_?Title" />
+    <meta property="og:image" content="_Image" />
+    <meta property="og:type" content="image/png" />
+    <meta property="og:image:width" content="500" />
+    <meta property="og:image:height" content="500" />
+    <meta property="og:description" content="Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="_color" />
+    <link rel="icon" type="image/x-icon" href="../Img/" />
+    <link href="/Css/login-page.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+    <div class="login-container">
+      <h2>Login</h2>
+      <form action="/dashboard" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" required />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="login-btn">Log In</button>
+
+        <div class="extra-links">
+          <a href="#">Forgot Password?</a> |
+          <a href="#">Sign Up</a>
+        </div>
+      </form>
+    </div>
+  </body>
+
+  <script type="text/javascript" src=""></script>
+</html>

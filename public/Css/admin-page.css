@@ -1,0 +1,115 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --pWidth: 100vw;
+    --pHeight: 100vh;
+    --chWidth: 90%;
+    --chHeight: 90%;
+    --bR: 15px;
+    --bckGb: rgba(0, 0, 0, 1);
+    --bckGw: rgba(255, 255, 255, 1);
+}
+
+body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: grid;
+      grid-template-columns: 220px 1fr 1fr 1fr;
+      grid-template-rows: 60px 1fr 1fr 1fr;
+      grid-template-areas:
+        "nav nav nav nav"
+        "sidebar content content content"
+        "sidebar content content content"
+        "sidebar content content content";
+    }
+
+/***************************************NAVBAR-STYLE**********************************************/
+    .navbar {
+      grid-area: nav;
+      background-color: #1e293b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1.5rem;
+      color: white;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #38bdf8;
+    }
+
+    .logout-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.4rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .logout-btn:hover {
+      background: #dc2626;
+    }
+
+    /***************************************SIDEBAR-STYLE**********************************************/
+    .sidebar {
+      grid-area: sidebar;
+      background-color: #334155;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .sidebar button {
+      background-color: #475569;
+      color: white;
+      border: none;
+      padding: 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s ease;
+    }
+    .sidebar button:hover {
+      background-color: #64748b;
+    }
+
+/***************************************CONTENT-STYLE**********************************************/
+    .content {
+      grid-area: content;
+      background-color: #f1f5f9;
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }

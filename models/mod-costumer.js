@@ -5,7 +5,7 @@ import DB from '../utilities/uti-db.js'
 
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
-import ownerClass from '../controllers/Classes/Customer.js';
+import customerClass from '../controllers/Classes/Customer.js';
 import  "../utilities/uti-hash.js";
 
 
@@ -83,6 +83,7 @@ const getAgendaPage = async (req, res) => {
     console.log('Getting the agenda Page', req.url);
     res.sendFile(costumerAgendaPage);
 }
+
 const getAgenda = async (req, res) => {
     console.log('Getting the agenda', req.url);
     const checkDB = await fetchCostumerFromDB();
@@ -132,11 +133,11 @@ const getImage = async (req, res) => {
 }
 
 const deleteCustomer = async (req, res) => {
-    console.log('Deleting customer');
-    const cus2Delete = ownerClass.search4Owner(req.params.customerId);
+    console.log('Deleting customer',req.params.customerId);
+    const cus2Delete = customerClass.search4Owner(req.params.customerId);
     const response = await cus2Delete;
     console.log("response:", response.data);
-    const cus = ownerClass.buildObject(response.data);
+    const cus = response.data;
     console.log("Customer to delete: ", cus.toJSON());
     const deleteQuery = await cus.deleteCustomer();
     const customer = deleteQuery.data;
@@ -168,8 +169,6 @@ const deleteCustomer = async (req, res) => {
         });
     }
 
-
-
 }
 
 const test = async (req, res) => {
@@ -178,31 +177,30 @@ const test = async (req, res) => {
 }
 
 const getCustomerList = async (req, res) => {
-    console.log("aaaaaaaa",req._parsedOriginalUrl.query.split('=')[1]);
-    const lastHashed = req._parsedOriginalUrl.query.split('=')[1];
-    const check4Customers = ownerClass.getAllCustomers(lastHashed);
-    if ((await check4Customers).error === 'uptoDate') {
-        res.status(200).json({
-        success: false,
-        data: (await check4Customers).data,
-        error: (await check4Customers).error,
-        type: 'notification-get-Customers',
-        origin: 'getCustomerList()-'.concat((await check4Customers).origin),
-        show: false,
-        hash:(await check4Customers).hash,
-    }); 
-    } else {
-        res.status(200).json({
-        success: (await check4Customers).success,
-        data: (await check4Customers).data,
-        error: (await check4Customers).error,
-        type: 'notification-get-Customers',
-        origin: 'getCustomerList()-'.concat((await check4Customers).origin),
-        show: false,
-        hash:(await check4Customers).hash,
-    });    
-    }
-    
+    console.log("Hash: ",req.params.hashed_id);
+        const lastHashed = req.params.hashed_id;
+        const check4Customers = customerClass.getAllCustomers(lastHashed);
+        if ((await check4Customers).error === 'uptoDate') {
+            res.status(200).json({
+                success: false,
+                data: (await check4Customers).data,
+                error: (await check4Customers).error,
+                type: 'notification-get-Customers',
+                origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+                show: false,
+                hash: (await check4Customers).hash,
+            });
+        } else {
+            res.status(200).json({
+                success: (await check4Customers).success,
+                data: (await check4Customers).data,
+                error: (await check4Customers).error,
+                type: 'notification-get-Customers',
+                origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+                show: false,
+                hash: (await check4Customers).hash,
+            });
+        }
 }
 
 //Exports whatever is above under Express.Router
@@ -229,7 +227,7 @@ async function sendCostumer2DB(data) {
         cosPhone: formattedCosPhone,
         //     otherContacts: null
     }
-    const customerFormatted = ownerClass.buildObject(formatted);
+    const customerFormatted = customerClass.buildObject(formatted);
     // console.log("Customer sent 2 DB: ", customerFormatted.toJSON());
     const query = 'INSERT INTO costumer (cos_id, cosName, cosPhone) values(?,?,?)';
     try {

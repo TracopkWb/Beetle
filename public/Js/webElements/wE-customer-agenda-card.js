@@ -47,7 +47,7 @@ class customerAgenda extends HTMLElement {
 
     set newData(newCus) {
         // console.log(newCus);
-        this.cardContainerResult.appendChild(this.createCard(newCus));
+        this.cardContainerResult.prepend(this.createCard(newCus));
         this.shadowRoot.appendChild(this.cardContainerResult);
     }
 
@@ -62,7 +62,7 @@ class customerAgenda extends HTMLElement {
     removeCustomer(customerId){
         // console.log(customerId,this.cardContainerResult.children);
          Array.from(this.cardContainerResult.children).forEach(child => {
-            console.log(child.attributes[2].value);
+            // console.log(child.attributes[2].value);
             if (child.attributes[2].value === customerId) {
                 child.remove();
             }
@@ -144,7 +144,7 @@ class customerAgenda extends HTMLElement {
         }
         );
         const res = await del.json();
-        // console.log(res);
+        console.log(res);
         // this.sendNotification(res,res.show);
     }
 

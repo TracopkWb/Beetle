@@ -20,6 +20,7 @@ const test = async function testDBConnection() {
             success: true,
             data:'Everything is ok',
             type: 'notification',
+            error:null,
             origin: 'testDBConnection()',
             show: false,
         }
@@ -31,7 +32,7 @@ const test = async function testDBConnection() {
             type: 'error',
             origin: 'testDBConnection()',
             show: true,
-            error: err.message,
+            error: 'Database NOT FOUND',
         }
     }
 }

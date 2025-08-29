@@ -23,7 +23,7 @@ router.delete('/Delete/:customerId', customerFile.deleteCustomer);
 router.get('/Search',customerFile.test);
 
 //URL-> Customers/getCustomersList/:query
-router.get('/getCustomersList', customerFile.getCustomerList);
+router.get('/getCustomersList/:hashed_id', customerFile.getCustomerList);
 
 
 //URL-> /Customers/updateCustomers

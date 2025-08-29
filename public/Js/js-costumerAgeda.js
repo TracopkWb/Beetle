@@ -1,21 +1,21 @@
+// const mainContainer = document.querySelector('[data-costumer-container]');
+// const filterContainer = document.querySelector('[data-costumer-container]');
+// const cardContainer = document.querySelector('[data-costumer-card-result]');
+// const cardContainerWE = document.querySelector('customer-agenda-result-card');
 
-const mainContainer = document.querySelector('[data-costumer-container]');
-const filterContainer = document.querySelector('[data-costumer-container]');
-const cardContainer = document.querySelector('[data-costumer-card-result]');
-const cardContainerWE = document.querySelector('customer-agenda-result-card');
+// console.log(mainContainer, filterContainer, cardContainerWE, cardContainerWE);
 
-console.log(mainContainer, filterContainer, cardContainerWE, cardContainerWE);
+// const getAgenda2 = async () => {
+//     const getCostumers = await fetch('/Customers/getCustomers', {
+//         method: 'GET'
+//     });
+//     const res = await getCostumers.json();
+//     console.log(typeof (res.data));
+//     cardContainerWE.data = res.data;
 
-const getAgenda2 = async () => {
-    const getCostumers = await fetch('/Customers/getCustomers', {
-        method: 'GET'
-    });
-    const res = await getCostumers.json();
-    console.log(typeof (res.data));
-    cardContainerWE.data = res.data;
+// }
+// getAgenda2();
 
-}
-getAgenda2();
 
 
 document.addEventListener("notify", (e) => {

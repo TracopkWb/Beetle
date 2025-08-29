@@ -1,19 +1,20 @@
 // import '../../utilities/uti-hash.js';
 import Hash from '../../utilities/uti-hash.js';
+import carClass from './Car.js';
 import DB from '../../utilities/uti-db.js';
-export default class Costumer {
+export default class Customer {
     //Attributes
     #cos_Id;
     #cosName;
     #cosPhone;
     #cosEmail = null;
-    #cosOtherPhone = [];
+    #cusCars = [];
 
-    constructor(owId, owName, owPhoneNum, owOtherContact = []) {
+    constructor(owId, owName, owPhoneNum) {
         this.#cos_Id = owId;
         this.#cosName = owName;
         this.#cosPhone = owPhoneNum;
-        this.#cosOtherPhone = owOtherContact;
+        this.#cusCars = [];
     }
 
     //Setters
@@ -49,16 +50,25 @@ export default class Costumer {
     get getOwnerEmail() {
         return this.#cosEmail;
     }
+
+    get getCustomerCars() {
+        return this.#cusCars;
+    }
     //Methods
     toJSON() {
         return {
             cos_Id: this.getOwnerId,
             cosName: this.getOwnerName,
             cosPhone: this.getOwnerPhoneNumber,
+            cusCars: this.getCustomerCars,
             // cosEmail: this.getOwnerEmail,
         }
     }
 
+    addCar(newCar) {
+        // console.log("newCar:",newCar);
+        this.#cusCars.push(newCar);
+    }
 
     async deleteCustomer() {
         console.log("Deleting Customer:", this.toJSON());
@@ -89,7 +99,16 @@ export default class Costumer {
     //static Methods
     static buildObject(obj) {
         // console.log("buildObject: ",obj);
-        return new Costumer(
+        return new Customer(
+            obj['cos_Id'],
+            obj.cosName,
+            obj.cosPhone,
+        );
+    }
+
+    static buildObjectWithCar(obj) {
+        // console.log("buildObject: ",obj);
+        return new Customer(
             obj['cos_Id'],
             obj.cosName,
             obj.cosPhone,
@@ -102,100 +121,128 @@ export default class Costumer {
             return {
                 success: false,
                 data: checkDB.data,
+                error: checkDB.error,
                 type: checkDB.type,
-                origin: 'fetchCostumerFromDB()-'.concat(checkDB.origin),
-                show: true
+                origin: 'search4Owner()-'.concat(checkDB.origin),
+                show: true,
             }
         }
-        const searchQuery = `SELECT * FROM costumer WHERE cos_Id = ?`;
-        const [costumerListRaw] = await DB.conn.execute(searchQuery, [id]);
-        // console.log(customerListRaw, Owner.buildObject(costumerListRaw));
+        const searchQueryCus = `SELECT * FROM costumer WHERE cos_Id = ?`;
+        const searchQueryCars = `SELECT * FROM car WHERE cos_Id = ?`;
         try {
+            ////////GETS ALL THE CUSTOMERS DATA
+            const [rawCustomerInfo] = await DB.conn.execute(searchQueryCus, [id]);
+            if (rawCustomerInfo.length === 0) {
+                return {
+                    success: false,
+                    data: `Customer ${id} not found`,
+                    error: `Wrong ID: ${id}`,
+                    type: 'notification-notFound',
+                    origin: 'search4Owner()-'.concat(checkDB.origin),
+                    show: true,
+                }
+            }
+
+            let customerInfo = this.buildObject(rawCustomerInfo[0]);
+
+            const [rawCarsInfo] = await DB.conn.execute(searchQueryCars, [id]);
+            // console.log(rawCustomerInfo);
+            rawCarsInfo.forEach(car => {
+                customerInfo.addCar(car);
+            });
+            // console.log(customerInfo.toJSON());
             return {
                 success: true,
-                data: costumerListRaw[0],
+                data: customerInfo,
                 error: null,
+                type: 'notification-found',
+                origin: 'search4Owner()-'.concat(checkDB.origin),
+                show: true,
             }
-        } catch (err) {
-            // console.log(err);
-            return {
-                success: false,
-                data: null,
-                error: err,
-            }
+        } catch(err) {
+        // console.log(err);
+        return {
+            success: false,
+            data: checkDB.data,
+            error: checkDB.error,
+            type: checkDB.type,
+            origin: 'search4Owner()-'.concat(checkDB.origin),
+            show: true,
         }
     }
+}
 
     static lastHashed = null; // store last hash globally in class
     static async getAllCustomers(hash) {
-        let cusList = [];
-        let currentHashed;
-        console.log('Getting all customers from DB');
-        const checkDB = await DB.testConnection();
-        if (!checkDB.success) {
-            return {
-                success: checkDB.success,
-                data: checkDB.data,
-                type: checkDB.type,
-                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
-                error: checkDB.error,
-                show: true,
-                hash: null,
-            }
-        }
-
-        try {
-            const [costumerListRaw] = await DB.conn.execute('SELECT * FROM costumer');
-            // console.log(typeof (costumerListRaw));
-
-            for (const nCus of costumerListRaw) {
-                const newCus = this.buildObject(nCus);
-                cusList.push(newCus);
-            }
-            // console.log(cusList);
-            //Hashing data to make sure indexDB in browser is upto date
-            // currentHashed = generateHash(cusList);
-            currentHashed = Hash.generateHash(cusList);
-            // console.log('hash', currentHashed);
-            this.lastHashed = currentHashed;
-            if (hash === null || hash === this.lastHashed) {
-                console.log('The data is upto date');
-                return {
-                    success: true,
-                    data: 'Data upto date',
-                    error: 'uptoDate',
-                    type: 'notification-get-Customers',
-                    origin: 'CustomersClass-getAllCustomers()-hash',
-                    show: false,
-                    hash: this.lastHashed,
-                }
-            }
-            return {
-                success: true,
-                data: cusList,
-                error: null,
-                type: 'notification-getCustomers',
-                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
-                show: false,
-                hash: currentHashed,
-            }
-        } catch (err) {
-            // console.log(err);
-            return {
-                success: false,
-                data: 'No customers found, check XAMPP',
-                error: err.message,
-                type: 'error-getCustomers',
-                origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
-                show: true,
-                hash: null,
-            }
-
+    let cusList = [];
+    let currentHashed;
+    console.log('Getting all customers from DB');
+    const checkDB = await DB.testConnection();
+    if (!checkDB.success) {
+        return {
+            success: checkDB.success,
+            data: checkDB.data,
+            type: checkDB.type,
+            origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+            error: checkDB.error,
+            show: true,
+            hash: null,
         }
     }
+
+    try {
+        const [costumerListRaw] = await DB.conn.execute('SELECT * FROM costumer');
+        // console.log((costumerListRaw));
+
+        for (const nCus of costumerListRaw) {
+            const newCus = await this.search4Owner(nCus['cos_Id']);
+            cusList.push(newCus.data);
+        }
+        console.log(cusList);
+
+        ////////////Hashing data to make sure indexDB in browser is upto date
+        // currentHashed = generateHash(cusList);
+        currentHashed = Hash.generateHash(cusList);
+        // console.log('hash', currentHashed);
+        this.lastHashed = currentHashed;
+        if (hash === null || hash === this.lastHashed) {
+            console.log('The data is upto date');
+            return {
+                success: true,
+                data: 'Data upto date',
+                error: 'uptoDate',
+                type: 'notification-get-Customers',
+                origin: 'CustomersClass-getAllCustomers()-hash',
+                show: false,
+                hash: this.lastHashed,
+            }
+        }
+        return {
+            success: true,
+            data: cusList,
+            error: null,
+            type: 'notification-getCustomers',
+            origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+            show: false,
+            hash: currentHashed,
+        }
+    } catch (err) {
+        // console.log(err);
+        return {
+            success: false,
+            data: 'No customers found, check XAMPP',
+            error: err.message,
+            type: 'error-getCustomers',
+            origin: 'CustomersClass-getAllCustomers()-'.concat(checkDB.origin),
+            show: true,
+            hash: null,
+        }
+
+    }
+}
 
     static async getSpecificCustomer(customerId) {
 
-    }
+}
 
 }

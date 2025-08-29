@@ -6,9 +6,10 @@ import cors from "cors";
 //Utilities dependencies
 import rootDir from './utilities/uti-path.js';
 //Routes
+import rays from './routes/rou-Rays.js';
 import forms from "./routes/rou-Forms.js";
 import costumer from './routes/rou-Costumers.js';
-import admin from './routes/rou-Admin.js'
+
 //
 // import controller from './routes/rou-Controllers.js';
 // import utilities from './routes/rou-Utilities.js';
@@ -32,9 +33,9 @@ app.get("/",(req,res,next)=>{
 });
 
 //ALWAYS USE app.use to reroute!!!!
+app.use("/Rays",rays.route);
 app.use("/Forms",forms.route);
 app.use("/Customers",costumer.route);
-app.use("/Admin",admin.route);
 
 // app.get("/CostumerForm",beetle.route);
 

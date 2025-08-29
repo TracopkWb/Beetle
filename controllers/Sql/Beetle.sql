@@ -308,7 +308,8 @@ JOIN models ON manufacturers.`man_Id` = models.`man_Id` LIMIT 200;
 
 SELECT costumer.*, car.*
 FROM costumer
-JOIN car ON costumer.`cos_Id` = car.`cos_Id`;
+JOIN car ON costumer.`cos_Id` = car.`cos_Id`
+WHERE costumer.`cos_Id` = 'LuSe4728';
 
 
 SELECT * FROM models WHERE `man_Id` = 80;
