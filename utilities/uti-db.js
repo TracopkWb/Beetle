@@ -29,10 +29,10 @@ const test = async function testDBConnection() {
         return{
             success: false,
             data:'Make sure XAMPP is started',
-            type: 'error',
+            type: 'notification-error',
             origin: 'testDBConnection()',
             show: true,
-            error: 'Database NOT FOUND',
+            error: 'Make sure XAMPP is started',
         }
     }
 }

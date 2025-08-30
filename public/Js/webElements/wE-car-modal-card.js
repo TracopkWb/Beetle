@@ -5,10 +5,11 @@ class Modal extends HTMLElement {
             mode: "open"
         });
         const styleLink = document.createElement('link');
-        styleLink.href = "/Css/modal-card.css",
-            styleLink.rel = "stylesheet",
-            styleLink.type = "text/css"
-        // ,this.shadowRoot.append(styleLink);
+        styleLink.href = "/Css/car-modal-card.css",
+        styleLink.rel = "stylesheet",
+        styleLink.type = "text/css",
+        this.shadowRoot.appendChild(styleLink);
+        console.log(styleLink);
     }
 
     connectedCallback() {
@@ -68,6 +69,7 @@ class Modal extends HTMLElement {
             data2Send.message.error = (res.type === 'error') ? true : false;
             console.log(data2Send.message);
             this.sendNotification(res, res.show);
+            
             this.dispatchEvent(new CustomEvent('send-data', {
                 detail: data2Send,
                 bubbles: true,  // allow the event to bubble up through DOM

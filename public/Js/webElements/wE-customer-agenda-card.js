@@ -81,7 +81,7 @@ class customerAgenda extends HTMLElement {
         //Costumer Photo
         const cusAvatar = document.createElement('img');
         cusAvatar.classList.add('customer-avatar');
-        cusAvatar.src = './getImage/neutral';
+        cusAvatar.src = './Image/neutral';
 
         cusAvatar.alt = cus['cos_Id'].concat('-avatar');
 
@@ -139,7 +139,7 @@ class customerAgenda extends HTMLElement {
 
     async deleteCustomer(customer) {
         console.log(customer);
-        const del = await fetch(`/Customers/Delete/${customer}`, {
+        const del = await fetch(`/Rays/Admin/Customers/Delete/${customer}`, {
             method: 'Delete'
         }
         );

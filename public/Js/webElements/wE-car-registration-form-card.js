@@ -5,10 +5,11 @@ class carModel extends HTMLElement {
             mode: "open"
         });
         const styleLink = document.createElement('link');
-        styleLink.href = "/Css/car-model-card.css",
-            styleLink.rel = "stylesheet",
-            styleLink.type = "text/css"
-        // ,this.shadowRoot.append(styleLink);
+        styleLink.setAttribute("rel", "stylesheet");
+        styleLink.setAttribute("href", "http://tracopk.ddns.net/Css/car-registration-modal-card.css");
+        styleLink.setAttribute("type", "text/css");
+        this.shadowRoot.appendChild(styleLink);
+        // console.log(styleLink);
     }
 
     async connectedCallback() {
@@ -45,6 +46,9 @@ class carModel extends HTMLElement {
 
             if (e.target.value.toString().toLowerCase() == 'other') {
                 const dialogModal = document.createElement('new-car-selector');
+                // const dialogModal = document.createElement('wE-car-modal-card');
+                console.log(dialogModal);
+                this.shadowRoot.appendChild(dialogModal);
                 dialogModal.addEventListener('send-data', (e) => {
                     console.log("CustomEvent: ", e.detail.message);
                     const newOptMan = document.createElement('option');
@@ -72,13 +76,13 @@ class carModel extends HTMLElement {
                     }
                 });
                 e.target.value = '';
-                this.shadowRoot.appendChild(dialogModal);
+                // this.shadowRoot.appendChild(dialogModal);
             }
         });
 
         modelSelect.addEventListener('change', (e) => {
             console.log(e.target.value);
-            
+
             if (e.target.value.toLowerCase() == 'other') {
                 const dialogModal2 = document.createElement('new-car-selector');
                 // console.log(dialogModal2);
@@ -133,7 +137,8 @@ class carModel extends HTMLElement {
     }
 
     set data(carData) {
-        // this.render();
+        console.log(carData);
+        this.render();
         // console.log("Project Data: ", projectData);
     }
 
@@ -285,13 +290,13 @@ class carModel extends HTMLElement {
         });
         const dataRawObj = await dataRaw.json();
 
-        this.sendNotification(dataRawObj,dataRawObj.show);
+        this.sendNotification(dataRawObj, dataRawObj.show);
         const fixedData = await this.fixJson(dataRawObj.data);
         this.sendNotification(fixedData, fixedData.show);
         // console.log(fixedData);
         return fixedData;
     }
-    
+
     async getCostumerList() {
         const dataRaw = await fetch('/Forms/Customer/SendList', {
             method: 'GET'
@@ -362,7 +367,7 @@ class carModel extends HTMLElement {
                 bubbles: true,     // Allows event to bubble up
                 composed: true,
             }));
-        } 
+        }
     }
 }
 

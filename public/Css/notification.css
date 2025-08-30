@@ -1,0 +1,30 @@
+/* General notification box */
+.notification {
+  color: black;
+  padding: 10px 20px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-family: sans-serif;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Variants */
+.notification.error {
+  background-color: #ec0101e7;
+}
+
+.notification.delete {
+  background-color: #e64514e7;
+}
+
+.notification.add {
+  background-color: #4caf50; /* nicer blue */
+    color: black;
+}
+
+/* Animate in/out */
+.notification.show {
+  opacity: 1;
+}

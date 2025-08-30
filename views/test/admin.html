@@ -30,10 +30,11 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <button>Add Client</button>
-      <button>Add Car</button>
-      <button>Add Service</button>
-      <button>Add Mechanic</button>
+      <!-- <button id="addClient">Add Client</button> -->
+      <a href="/Rays/Admin/Customers/addCustomerPage" target="_blank">Add Client</a>
+      <a href="/Rays/Admin/Cars/addCar" target="_blank">Add Car</a>
+      <a>Add Service</a>
+      <a>Add Mechanic</a>
     </aside>
 
     <!-- Content -->
@@ -46,7 +47,18 @@
       <div class="card">Content 6</div>
     </main>
   </body>
-
+  <script
+    type="text/javascript"
+    src="/Js/webElements/wE-add-new-customer-card.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="/Js/webElements/wE-car-registration-form-card.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="/Js/webElements/wE-car-modal-card.js"
+  ></script>
   <script type="text/javascript" src="/Js/test/admin-indexDB.js"></script>
   <script type="text/javascript" src="/Js/test/adminPage.js"></script>
 </html>

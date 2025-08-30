@@ -2,7 +2,7 @@
 ///////////////////////////////////////////////////////////////Search Bar prediction
 const searchInput = document.getElementById("search");
 const resultsContainer = document.getElementById("results");
-const cardContainerWE = document.querySelector('customer-agenda-result-card');
+// const cardContainerWE = document.querySelector('customer-agenda-result-card');
 
 let customerList = [];
 let filtered = [];
@@ -175,8 +175,3 @@ function removeChildren(parent) {
 // });
 
 ///////////////////////////Nothing
-document.getElementById("reload").addEventListener("click", (e) => {
-    e.preventDefault();
-    //   console.log(localStorage.getItem("lastHashed"));
-    //   getCustomerFromServer(localStorage.getItem("lastHashed"));
-});

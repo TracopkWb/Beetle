@@ -1,0 +1,62 @@
+/* Form container */
+form[data-car-form] {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #f8fafc;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+  max-width: 400px;
+}
+
+/* Labels */
+form[data-car-form] label {
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+/* Inputs and Selects */
+form[data-car-form] input,
+form[data-car-form] select {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+form[data-car-form] input:focus,
+form[data-car-form] select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 3px rgba(56,189,248,0.5);
+}
+
+/* Button */
+form[data-car-form] [data-send-form-button],
+form[data-car-form] button {
+  padding: 0.7rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  background: #1e293b;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+form[data-car-form] [data-send-form-button]:hover,
+form[data-car-form] button:hover {
+  background: #0f172a;
+  transform: scale(1.02);
+}
+
+/* Optional: spacing for select/other options */
+form[data-car-form] select option {
+  padding: 0.2rem 0.5rem;
+}

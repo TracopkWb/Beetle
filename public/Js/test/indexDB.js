@@ -21,10 +21,10 @@ request.onsuccess = async (event) => {
     //   console.log(await getCustomerFromServer());
 };
 
-///////Fetch the data and add oit t DB
+///////Fetch the data and add it t DB
 async function getCustomerFromServer(hash) {
     const getCustomerList = await fetch(
-        `/Customers/getCustomersList/${hash}`,
+        `/Rays/Admin/Customers/CustomersList/${hash}`,
         {
             method: "GET",
         }
@@ -79,7 +79,6 @@ evtSource.onmessage = async (event) => {
     switch (notificationType) {
         case "add":
             await updateCustomersDiff(notificationType, notification.data);
-
             break;
         case "delete":
             await updateCustomersDiff(notificationType, notification.data);

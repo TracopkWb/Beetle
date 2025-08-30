@@ -22,6 +22,7 @@ router.get('/Home',adminFile.getAdminPage);
 
 //URL-> /Admin/Cars
 router.get('/Cars/',adminFile.getCarsPage);
+router.get('/Cars/addCar',adminFile.getAddNewCarPage);
 router.get('/Cars/:car_Id',adminFile.getCarInfo);
 router.get('/CarList/:hashed_id',adminFile.getCars);
 
@@ -29,8 +30,11 @@ router.get('/CarList/:hashed_id',adminFile.getCars);
 
 //URL-> /Admin/Customers
 router.get('/Customers/',adminFile.getCustomerPage);
-router.get('/Customers/:customer_Id',adminFile.getCustomerInfo);
-router.get('/CustomersList/:hashed_id',adminFile.getCustomers);
+router.get('/Customers/addCustomerPage',adminFile.getAddNewCustomerPage);
+// router.get('/Customers/:customer_Id',adminFile.getCustomerInfo);
+router.get('/Customers/CustomersList/:hashed_id',adminFile.getCustomers);
+router.delete('/Customers/Delete/:customerId', adminFile.deleteCustomer);
+router.post("/Customers/Post/newCustomer",adminFile.postNewCustomer);
 
 ///////SERVICES ROUTING
 
@@ -39,8 +43,9 @@ router.get('/Services/',adminFile.getServicesPage);
 router.get('/Services/:service_Id',adminFile.getServiceInfo);
 router.get('/ServicesList/:hashed_id',adminFile.getServices);
 
-
-
+///////IMAGES
+//URL-> /Admin/Image
+router.get('/Image/:imgId', adminFile.getImage);
 
 //URL-> /Admin/events
 router.get('/events',adminFile.getUpdate);

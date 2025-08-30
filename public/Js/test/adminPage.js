@@ -11,3 +11,13 @@ async function getCustomerInfo(customerId){
     const res = await getReq.json();
     console.log(res);
 }
+
+const addClientBtn = document.querySelector('#addClient');
+console.log(addClientBtn);
+
+addClientBtn.addEventListener('click',(e)=>{
+    e.preventDefault();
+    console.log('add new client btn clicked');
+    const newUserModal = document.createElement('add-new-customer-card');
+    document.body.appendChild(newUserModal);
+})

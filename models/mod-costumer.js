@@ -6,7 +6,8 @@ import DB from '../utilities/uti-db.js'
 //Initializing Dependencies
 import rootPath from '../utilities/uti-path.js';
 import customerClass from '../controllers/Classes/Customer.js';
-import  "../utilities/uti-hash.js";
+import "../utilities/uti-hash.js";
+import { error } from 'console';
 
 
 //Initializing Router
@@ -30,26 +31,26 @@ const addCostumer = (req, res) => {
 }
 
 
-const gettingData = async (req, res) => {
+const receivingData = async (req, res) => {
     const costumerData = req.body;
+    const sqlQuery = await sendCostumer2DB(costumerData);
     try {
-        const sqlQuery = await sendCostumer2DB(costumerData);
         res.json({
-            success: sqlQuery.success,
-            received: sqlQuery.data,
-            // data: query.data,
-            error: null,
-            origin: 'gettingData()',
-            show: false,
+            success: true,
+            data: sqlQuery.data,
+            error: sqlQuery.error,
+            type: sqlQuery.type,
+            origin: 'receivingData()-'.concat(sqlQuery.origin),
+            show: sqlQuery.show,
         });
     } catch (err) {
         res.json({
             success: false,
-            received: null,
-            error: err.message,
-            origin: 'gettingData()',
-            type: 'notification-gettingData()',
-            show: true,
+            data: sqlQuery.data,
+            error: sqlQuery.error,
+            type: sqlQuery.type,
+            origin: 'receivingData()-'.concat(sqlQuery.origin),
+            show: sqlQuery.show,
         });
     }
 }
@@ -133,7 +134,7 @@ const getImage = async (req, res) => {
 }
 
 const deleteCustomer = async (req, res) => {
-    console.log('Deleting customer',req.params.customerId);
+    console.log('Deleting customer', req.params.customerId);
     const cus2Delete = customerClass.search4Owner(req.params.customerId);
     const response = await cus2Delete;
     console.log("response:", response.data);
@@ -177,36 +178,36 @@ const test = async (req, res) => {
 }
 
 const getCustomerList = async (req, res) => {
-    console.log("Hash: ",req.params.hashed_id);
-        const lastHashed = req.params.hashed_id;
-        const check4Customers = customerClass.getAllCustomers(lastHashed);
-        if ((await check4Customers).error === 'uptoDate') {
-            res.status(200).json({
-                success: false,
-                data: (await check4Customers).data,
-                error: (await check4Customers).error,
-                type: 'notification-get-Customers',
-                origin: 'getCustomerList()-'.concat((await check4Customers).origin),
-                show: false,
-                hash: (await check4Customers).hash,
-            });
-        } else {
-            res.status(200).json({
-                success: (await check4Customers).success,
-                data: (await check4Customers).data,
-                error: (await check4Customers).error,
-                type: 'notification-get-Customers',
-                origin: 'getCustomerList()-'.concat((await check4Customers).origin),
-                show: false,
-                hash: (await check4Customers).hash,
-            });
-        }
+    console.log("Hash: ", req.params.hashed_id);
+    const lastHashed = req.params.hashed_id;
+    const check4Customers = customerClass.getAllCustomers(lastHashed);
+    if ((await check4Customers).error === 'uptoDate') {
+        res.status(200).json({
+            success: false,
+            data: (await check4Customers).data,
+            error: (await check4Customers).error,
+            type: 'notification-get-Customers',
+            origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+            show: false,
+            hash: (await check4Customers).hash,
+        });
+    } else {
+        res.status(200).json({
+            success: (await check4Customers).success,
+            data: (await check4Customers).data,
+            error: (await check4Customers).error,
+            type: 'notification-get-Customers',
+            origin: 'getCustomerList()-'.concat((await check4Customers).origin),
+            show: false,
+            hash: (await check4Customers).hash,
+        });
+    }
 }
 
 //Exports whatever is above under Express.Router
 export default {
     registration: addCostumer,
-    receivingData: gettingData,
+    receivingData: receivingData,
     fetchList: sendCostumers2WebSite,
     getAgendaPage: getAgendaPage,
     getAgenda: getAgenda,
@@ -228,29 +229,33 @@ async function sendCostumer2DB(data) {
         //     otherContacts: null
     }
     const customerFormatted = customerClass.buildObject(formatted);
-    // console.log("Customer sent 2 DB: ", customerFormatted.toJSON());
-    const query = 'INSERT INTO costumer (cos_id, cosName, cosPhone) values(?,?,?)';
+    
+    const req = await customerClass.sendCustomer2DB(customerFormatted);
     try {
-        const result = await DB.conn.execute(query, [customerFormatted.getOwnerId, customerFormatted.getOwnerName, customerFormatted.getOwnerPhoneNumber]);
-        // console.log(result);
         notifyUpdate({
-            success: true,
-            data: customerFormatted.toJSON(),
+            success: req.success,
+            data: customerFormatted,
+            error: req.error,
             type: 'notification-add-Costumer',
-            origin: 'sendCustomer2DDB()',
+            origin: 'sendCustomer2DDB()-'.concat(req.origin),
             show: true,
         });
         return {
-            success: true,
-            error: null,
-            data: formatted,
+            success: req.success,
+            data: req.data,
+            error: req.error,
+            type: req.type,
+            origin: 'sendCustomer2DDB()-'.concat(req.origin),
+            show: true,
         }
     } catch (err) {
-        console.log(err);
         return {
             success: false,
-            error: err.message,
-            data: null,
+            data: req.data,
+            error: req.error,
+            type: req.type,
+            origin: 'sendCustomer2DDB()'.concat(req.origin),
+            show: true,
         }
     }
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns#">
   <head>
-    <title>Car Registration From</title>
+    <title>Customer Registration From</title>
     <meta charset="UTF-8" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Car Registration From" />
@@ -15,7 +15,8 @@
     <!-- <link rel="icon" type="image/x-icon" href="../Img/" /> -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="" rel="stylesheet" type="text/css" />
+    <link href="/Css/add-customer.css" rel="stylesheet" type="text/css" />
+    <link href="/Css/notification.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body>
@@ -30,6 +31,10 @@
       <input type="tel" name="cos_Phone" id="phoneInput"><br />
     </form>
     <button data-send-form>Save</button>
+     <div
+      id="notifications-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 9999"
+    ></div>
   </body>
   <script type="text/javascript" src="/Js/js-costumerForm.js"></script>
 </html>

@@ -1,0 +1,82 @@
+/* Dialog styling */
+dialog[data-new-car] {
+  border: none;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+  font-family: Arial, sans-serif;
+}
+
+/* Fieldset */
+dialog[data-new-car] fieldset {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Legend */
+dialog[data-new-car] legend {
+  font-weight: bold;
+  color: #1e293b;
+  padding: 0 0.5rem;
+}
+
+/* Labels */
+dialog[data-new-car] label {
+  font-weight: 600;
+  display: block;
+  margin: 0.5rem 0 0.2rem;
+  color: #334155;
+}
+
+/* Inputs */
+dialog[data-new-car] input {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+dialog[data-new-car] input:focus {
+  border-color: #38bdf8;
+}
+
+/* Buttons (divs with data attributes) */
+dialog[data-new-car] [data-send-btn],
+dialog[data-new-car] [data-close-btn] {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  text-align: center;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+/* Add button */
+dialog[data-new-car] [data-send-btn] {
+  background: #1e293b;
+  color: white;
+  margin-right: 0.5rem;
+}
+dialog[data-new-car] [data-send-btn]:hover {
+  background: #0f172a;
+  transform: scale(1.02);
+}
+
+/* Cancel button */
+dialog[data-new-car] [data-close-btn] {
+  background: #ef4444;
+  color: white;
+}
+dialog[data-new-car] [data-close-btn]:hover {
+  background: #dc2626;
+  transform: scale(1.02);
+}

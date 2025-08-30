@@ -83,8 +83,9 @@ body {
       gap: 1rem;
     }
 
-    .sidebar button {
-      background-color: #475569;
+    .sidebar a {
+      background-color: #506d96;
+      /* background-color: #475569; */
       color: white;
       border: none;
       padding: 0.75rem;
@@ -93,7 +94,7 @@ body {
       text-align: left;
       transition: background 0.2s ease;
     }
-    .sidebar button:hover {
+    .sidebar a:hover {
       background-color: #64748b;
     }
 
