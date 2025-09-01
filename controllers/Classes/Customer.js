@@ -122,6 +122,7 @@ export default class Customer {
             return {
                 success: false,
                 data: checkDB.data,
+                message:checkDB.message,
                 error: checkDB.error,
                 type: checkDB.type,
                 origin: 'search4Owner()-'.concat(checkDB.origin),
@@ -133,8 +134,9 @@ export default class Customer {
             return {
                 success: check4Duplicity.success,//false
                 data: check4Duplicity.data,
+                message:check4Duplicity.message,
                 error: check4Duplicity.error,
-                type: check4Duplicity.type,
+                type: check4Duplicity.type,//error-add
                 origin: 'CustomerClass-sendCustomer2DB()-'.concat(check4Duplicity.origin),
                 show: true,
             }
@@ -144,7 +146,8 @@ export default class Customer {
             const result = await DB.conn.execute(query, [customer.getOwnerId, customer.getOwnerName, customer.getOwnerPhoneNumber]);
             return {
                 success: true,
-                data: `Customer ${customer.getOwnerName} has been added to the database`,
+                data:customer,
+                message:`Customer ${customer.getOwnerName} has been added to the database`,
                 error: null,
                 type: 'notification-add-database',
                 origin: 'CustomerClass-sendCustomer2DB()-'.concat(checkDB.origin),
@@ -154,6 +157,7 @@ export default class Customer {
             return {
                 success: false,
                 data: checkDB.data,
+                message:checkDB.message,
                 error: checkDB.error,
                 type: checkDB.type,
                 origin: 'CustomerClass-sendCustomer2DB()-'.concat(checkDB.origin),
@@ -171,9 +175,10 @@ export default class Customer {
             console.log(`The customer ${customer.getOwnerId} is already in the database`);
             return {
                 success: false,
-                data: `Try another number`,
-                error: `The phone number ${customer.getOwnerPhoneNumber} is already in the Database`,
-                type: 'notification-error-database',
+                data: null,
+                message:`The phone number ${customer.getOwnerPhoneNumber} is already in the Database`,
+                error: `Duplicity found with ${customer.getOwnerPhoneNumber}`,
+                type: 'error-add-database',
                 origin: '-check4CustomerDuplicity()',
                 show: true,
             }
@@ -181,6 +186,7 @@ export default class Customer {
             return {
                 success: true,
                 data: customer,
+                message:null,
                 error: null,
                 type: 'notification-add-database',
                 origin: '-check4CustomerDuplicity()',
@@ -193,23 +199,26 @@ export default class Customer {
         const checkDB = await DB.testConnection();
         if (!checkDB.success) {
             return {
-                success: false,
+                success: checkDB.success,
                 data: checkDB.data,
                 error: checkDB.error,
+                message:checkDB.message,
                 type: checkDB.type,
                 origin: 'search4Owner()-'.concat(checkDB.origin),
-                show: true,
+                show: checkDB.show,
             }
         }
         const searchQueryCus = `SELECT * FROM costumer WHERE cos_Id = ?`;
         const searchQueryCars = `SELECT * FROM car WHERE cos_Id = ?`;
         try {
-            ////////GETS ALL THE CUSTOMERS DATA
+            //////GETS ALL THE CUSTOMERS DATA
             const [rawCustomerInfo] = await DB.conn.execute(searchQueryCus, [id]);
+            console.log(rawCustomerInfo);
             if (rawCustomerInfo.length === 0) {
                 return {
                     success: false,
-                    data: `Customer ${id} not found`,
+                    data: id,
+                    message:`Customer ${id} not found`,
                     error: `Wrong ID: ${id}`,
                     type: 'notification-notFound',
                     origin: 'search4Owner()-'.concat(checkDB.origin),
@@ -220,7 +229,7 @@ export default class Customer {
             let customerInfo = this.buildObject(rawCustomerInfo[0]);
 
             const [rawCarsInfo] = await DB.conn.execute(searchQueryCars, [id]);
-            // console.log(rawCustomerInfo);
+            console.log(rawCustomerInfo);
             rawCarsInfo.forEach(car => {
                 customerInfo.addCar(car);
             });
@@ -229,16 +238,18 @@ export default class Customer {
                 success: true,
                 data: customerInfo,
                 error: null,
+                message:`Customer ${customerInfo.getOwnerName} found`,
                 type: 'notification-found',
                 origin: 'search4Owner()-'.concat(checkDB.origin),
                 show: true,
             }
         } catch (err) {
-            // console.log(err);
+            console.log(err);
             return {
                 success: false,
                 data: checkDB.data,
                 error: checkDB.error,
+                message:checkDB.message,
                 type: checkDB.type,
                 origin: 'search4Owner()-'.concat(checkDB.origin),
                 show: true,

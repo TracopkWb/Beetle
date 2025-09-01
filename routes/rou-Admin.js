@@ -31,7 +31,8 @@ router.get('/CarList/:hashed_id',adminFile.getCars);
 //URL-> /Admin/Customers
 router.get('/Customers/',adminFile.getCustomerPage);
 router.get('/Customers/addCustomerPage',adminFile.getAddNewCustomerPage);
-// router.get('/Customers/:customer_Id',adminFile.getCustomerInfo);
+router.get('/Customers/infoPage/',adminFile.getCustomerInfo);
+router.get('/Customers/infoPage/:customer_Id',adminFile.getCustomerInfo);
 router.get('/Customers/CustomersList/:hashed_id',adminFile.getCustomers);
 router.delete('/Customers/Delete/:customerId', adminFile.deleteCustomer);
 router.post("/Customers/Post/newCustomer",adminFile.postNewCustomer);

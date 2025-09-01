@@ -1,3 +1,57 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: sans-serif;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.form-row label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.form-row input,
+.form-row textarea {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-width: 120px;
+}
+
+.full-width {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.button-row {
+  justify-content: flex-end;
+}
+
+button[data-send-form] {
+  padding: 10px 20px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+button[data-send-form]:hover {
+  background: #43a047;
+}
+
 /* Form container */
 form[data-car-form] {
   display: flex;
@@ -59,4 +113,13 @@ form[data-car-form] button:hover {
 /* Optional: spacing for select/other options */
 form[data-car-form] select option {
   padding: 0.2rem 0.5rem;
+}
+
+
+input:disabled {
+  background-color: #e0e0e0; /* A light grey background */
+  color: #1b1a1a; /* A darker grey text color for contrast */
+  border: 1px solid #cccccc; /* A subtle border */
+  cursor: not-allowed; /* Indicates the element is not interactive */
+  opacity: 0.7; /* Optional: slightly reduce opacity for visual distinction */
 }

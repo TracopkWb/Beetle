@@ -2,10 +2,10 @@
 ///////////////////////////////////////////////////////////////Search Bar prediction
 const searchInput = document.getElementById("search");
 const resultsContainer = document.getElementById("results");
-// const cardContainerWE = document.querySelector('customer-agenda-result-card');
+const cardContainerWE = document.querySelector('customer-agenda-result-card');
 
-let customerList = [];
 let filtered = [];
+let customerList = [];
 getCustomerList();
 // show all initially
 // renderResults(customerList);
@@ -52,6 +52,7 @@ function getCustomerList() {
                 cursor.continue();
             }
         }
+        console.log(customerList);
     };
 }
 
@@ -78,100 +79,51 @@ function removeChildren(parent) {
     console.log(parent);
 }
 
-// function searchByIndex(db,indexName,term){
-//     return new Promise((res, rej)=>{
-//         //db will be the opened Db
-//         //transaction is the readonly setup
-//         const transaction = db.transaction('customers','readonly');
-//         //store is the variable where all data will be saved, const customers
-//         const store = transaction.objectStore('customers');
-//         const index = store.index(indexName); //Here is where cosName, cosPhone goes
 
-//         //Creare the term similar to use like %a
-//         const range = IDBKeyRange.bound(
-//             term,
-//             term + "\uffff",
-//         );
-//         const results = [];
+document.addEventListener("notify", (e) => {
+    // console.log(e);
+    console.log(e.detail);
+    showNotification(e.detail.type, e.detail.message, e.detail.data, e.detail.origin);
+});
 
-//         index.openCursor(range).onsuccess= (e)=>{
-//             const cursor = e.target.result;
-//             console.log(cursor);
-//             if(cursor){
-//                 results.push(cursor.value);
-//                 cursor.continue();
-//             }
-//         };
 
-//         transaction.oncomplete = () => res(results);
-//         transaction.onerror = (err) => rej(err);
-//     });
-// }
+function showNotification(notification) {
+    console.log(notification);
+    const container = document.getElementById("notifications-container");
 
-// function searchByKey(db, term) {
-//   return new Promise((resolve, reject) => {
-//     const tx = db.transaction("customers", "readonly");
-//     const store = tx.objectStore("customers");
+    const notDiv = document.createElement("div");
+    notDiv.classList.add("notification");
 
-//     const range = IDBKeyRange.bound(
-//       term, 
-//       term + "\uffff"
-//     );
-//     console.log(term, range);
+    // Add type-specific class
+    const event = notification.type.split('-')[0]?.trim();  // <-- trim
+    const eventType = notification.type.split('-')[1]?.trim();  // <-- trim
+    console.log(eventType);
+    
+    console.log("Applied classes:", notDiv.className);
+    
+    // Message handling
+    if (event === 'error') {
+        notDiv.classList.add(event);
+        notDiv.textContent = `${notification.error}`;
+    }
+    if (event === 'notification') {
+        notDiv.classList.add(eventType);
+        if (eventType === 'delete') {
+            notDiv.textContent = `The customer ${notification.data.cosName} has been deleted`;
+        } else if (eventType === 'add') {
+            notDiv.textContent = `${notification.message}`;
+        }
+    }
 
-//     const results = [];
-//     store.openCursor(range).onsuccess = (e) => {
-//       const cursor = e.target.result;
-//       console.log(cursor);
-//       if (cursor) {
-//         results.push(cursor.value);
-//         cursor.continue();
-//       }
-//     };
 
-//     tx.oncomplete = () => resolve(results);
-//     tx.onerror = (err) => reject(err);
-//   });
-// }
+    container.appendChild(notDiv);
 
-// async function searchCustomers(term) {
-//   return new Promise((resolve, reject) => {
-//     const request = indexedDB.open("CustomerList", 1);
+    // Fade in
+    setTimeout(() => notDiv.classList.add("show"), 10);
 
-//     request.onsuccess = async (e) => {
-//       const db = e.target.result;
-//       term = term.toLowerCase();
-
-//       try {
-//         const [byName, byPhone, byId] = await Promise.all([
-//         //   searchByIndex(db, 'cosName', term),
-//           searchByIndex(db, "cosPhone", term),
-//           searchByKey(db, term) // primary key search
-//         ]);
-
-//         resolve({
-//           names: byName,
-//           phones: byPhone,
-//           ids: byId
-//         });
-//       } catch (err) {
-//         reject(err);
-//       }
-//     };
-
-//     request.onerror = (err) => reject(err);
-//   });
-// }
-
-// document.querySelector("#search").addEventListener("input", async (e) => {
-//   const term = e.target.value.trim();
-//   if (!term) return;
-
-//   const results = await searchCustomers(term);
-
-//   console.log("By Name:", results.names);
-//   console.log("By Phone:", results.phones);
-//   console.log("By ID:", results.ids);
-// });
-
-///////////////////////////Nothing
+    // Remove after 2 sec
+    setTimeout(() => {
+        notDiv.classList.remove("show");
+        setTimeout(() => notDiv.remove(), 500);
+    }, 2000);
+}

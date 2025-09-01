@@ -71,13 +71,16 @@ const getCustomers = async (req, res) => {
 }
 
 const getCustomerInfo = async (req, res) => {
-    console.log('Getting customer info wid ID:', req.params.customerId);
-    const customer = await customerClass.search4Owner(req.params.customerId);
+    // console.log(req);
+    console.log('Getting customer info wid ID:', req.params.customer_Id);
+    const customer = await customerClass.search4Owner(req.params.customer_Id);
+    console.log(customer);
     if (customer.success) {
         res.status(200).json({
-            success: true,
+            success: customer.success,
             data: customer.data,
-            error: null,
+            message: customer.message,
+            error: customer.error,
             type: customer.type,
             origin: ('getCustomerInfo()-').concat(customer.origin),
             show: customer.show,
@@ -86,6 +89,7 @@ const getCustomerInfo = async (req, res) => {
         res.status(500).json({
             success: false,
             data: customer.data,
+            message: customer.message,
             error: customer.error,
             type: customer.type,
             origin: ('getCustomerInfo()-').concat(customer.origin),
@@ -136,12 +140,13 @@ const deleteCustomer = async (req, res) => {
 }
 
 const postNewCustomer = async (req, res) => {
-    const costumerData = req.body;
-    const sqlQuery = await sendCostumer2DB(costumerData);
+    const customerData = req.body;
+    const sqlQuery = await sendCostumer2DB(customerData);
     try {
         res.json({
-            success: true,
+            success: sqlQuery.success,
             data: sqlQuery.data,
+            message: sqlQuery.message,
             error: sqlQuery.error,
             type: sqlQuery.type,
             origin: 'receivingData()-'.concat(sqlQuery.origin),
@@ -149,8 +154,9 @@ const postNewCustomer = async (req, res) => {
         });
     } catch (err) {
         res.json({
-            success: false,
+            success: sqlQuery.success,
             data: sqlQuery.data,
+            message: sqlQuery.message,
             error: sqlQuery.error,
             type: sqlQuery.type,
             origin: 'receivingData()-'.concat(sqlQuery.origin),
@@ -353,18 +359,21 @@ async function sendCostumer2DB(data) {
     const customerFormatted = customerClass.buildObject(formatted);
 
     const req = await customerClass.sendCustomer2DB(customerFormatted);
+    console.log('req',req)
     try {
         seeRoute.sendEvent("admin", {
             success: req.success,
             data: customerFormatted,
+            message: req.message,
             error: req.error,
-            type: 'notification-add-Costumer',
+            type: req.type,
             origin: 'sendCustomer2DDB()-'.concat(req.origin),
             show: true,
         });
         return {
             success: req.success,
             data: req.data,
+            message: req.message,
             error: req.error,
             type: req.type,
             origin: 'sendCustomer2DDB()-'.concat(req.origin),

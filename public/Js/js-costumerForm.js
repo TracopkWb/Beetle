@@ -16,7 +16,7 @@ sendButton.addEventListener('click', async (e) => {
     }
     const costumerData = Object.fromEntries(formData.entries());
     console.log(formData, costumerData);
-    
+
     const sendingData = await fetch('/Rays/Admin/Customers/Post/newCustomer', {
         method: 'POST',
         headers: {
@@ -60,38 +60,43 @@ document.addEventListener("notify", (e) => {
 });
 
 
-function showNotification(notification, data) {
+function showNotification(notification) {
     console.log(notification);
     const container = document.getElementById("notifications-container");
 
-    const not = document.createElement("div");
-    not.classList.add("notification");
+    const notDiv = document.createElement("div");
+    notDiv.classList.add("notification");
 
     // Add type-specific class
-    const type = notification.type.split('-')[1]?.trim();  // <-- trim
-    console.log(type);
-    not.classList.add(type);
-
-    not.classList.add(type);
-    console.log("Applied classes:", not.className);
-
+    const event = notification.type.split('-')[0]?.trim();  // <-- trim
+    const eventType = notification.type.split('-')[1]?.trim();  // <-- trim
+    console.log(eventType);
+    
+    console.log("Applied classes:", notDiv.className);
+    
     // Message handling
-    if (type === 'error') {
-        not.textContent = `${notification.error}`;
-    } else if (type === 'delete') {
-        not.textContent = `The customer ${notification.data.cosName} has been deleted`;
-    } else if (type === 'add') {
-        not.textContent = `${notification.data}`;
+    if (event === 'error') {
+        notDiv.classList.add(event);
+        notDiv.textContent = `${notification.error}`;
+    }
+    if (event === 'notification') {
+        notDiv.classList.add(eventType);
+        if (eventType === 'delete') {
+            notDiv.textContent = `The customer ${notification.data.cosName} has been deleted`;
+        } else if (eventType === 'add') {
+            notDiv.textContent = `${notification.message}`;
+        }
     }
 
-    container.appendChild(not);
+
+    container.appendChild(notDiv);
 
     // Fade in
-    setTimeout(() => not.classList.add("show"), 10);
+    setTimeout(() => notDiv.classList.add("show"), 10);
 
     // Remove after 2 sec
     setTimeout(() => {
-        not.classList.remove("show");
-        setTimeout(() => not.remove(), 500);
+        notDiv.classList.remove("show");
+        setTimeout(() => notDiv.remove(), 500);
     }, 2000);
 }

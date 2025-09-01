@@ -22,7 +22,7 @@ request.onsuccess = async (event) => {
 //Fetch the data and add it to DB
 async function getCustomerFromServer(hash) {
     const getCustomerList = await fetch(
-        `/Admin/CustomersList/${hash}`,
+        `/Rays/Admin/Customers/CustomersList/${hash}`,
         {
             method: "GET",
         }
@@ -66,21 +66,25 @@ async function updateCustomersDiff(type, data) {
     };
 }
 
-const evtSource = new EventSource("/Admin/events");
-evtSource.onmessage = async (event) => {
-    const notification = JSON.parse(event.data);
-    const notificationType = notification.type.split("-")[1];
-    console.log(notification, notificationType);
-    switch (notificationType) {
-        case "add":
-            await updateCustomersDiff(notificationType, notification.data);
-
-            break;
-        case "delete":
-            await updateCustomersDiff(notificationType, notification.data);
-            break;
-
-        default:
-            break;
+const evtSource = new EventSource("/Rays/Admin/events");
+evtSource.onmessage = async (e) => {
+    const notification = JSON.parse(e.data);
+    const event = notification.type.split("-")[0];
+    const eventType = notification.type.split("-")[1];
+    console.log(notification, eventType);
+    if (event === 'notification') {
+        switch (eventType) {
+            case "add":
+                await updateCustomersDiff(notification, notification.data);
+                break;
+            case "delete":
+                await updateCustomersDiff(notification, notification.data);
+                break;
+            default:
+                break;
+        }
     }
+    showNotification(notification);
+
+
 };

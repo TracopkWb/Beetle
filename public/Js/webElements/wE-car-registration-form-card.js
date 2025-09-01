@@ -6,7 +6,7 @@ class carModel extends HTMLElement {
         });
         const styleLink = document.createElement('link');
         styleLink.setAttribute("rel", "stylesheet");
-        styleLink.setAttribute("href", "http://tracopk.ddns.net/Css/car-registration-modal-card.css");
+        styleLink.setAttribute("href", "/Css/car-registration-modal-card.css");
         styleLink.setAttribute("type", "text/css");
         this.shadowRoot.appendChild(styleLink);
         // console.log(styleLink);
@@ -22,6 +22,8 @@ class carModel extends HTMLElement {
         const manufacturerSelect = this.shadowRoot.querySelector('[data-manufacturer-selection]');
         const modelSelect = this.shadowRoot.querySelector('[data-model-selection]');
         const sendButton = this.shadowRoot.querySelector('[data-send-form-button]');
+        const licenseCheckBox = this.shadowRoot.querySelector('[data-no-license]');
+        const licenseInput = this.shadowRoot.querySelector('[data-license]');
 
         // console.log(modelSelect);
         // console.log(manufacturerSelect);
@@ -103,6 +105,22 @@ class carModel extends HTMLElement {
             // e.target.value = '';
         });
 
+        
+        //Checking checkbox
+        licenseCheckBox.addEventListener('change', () => {
+            if (licenseCheckBox.checked) {
+                console.log('No license Plate fro this car');
+                licenseInput.setAttribute('disabled', '');
+                let randomInt = this.getRandomInteger(1, 10);
+                // console.log(randomInt);
+                // console.log(licenseCheckBox);
+                licenseCheckBox.value = randomInt;
+                licenseInput.placeholder = randomInt;
+            } else {
+                licenseInput.removeAttribute('disabled');
+            }
+        })
+
         ////SEND THE CAR'S FORM
         sendButton.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -115,7 +133,7 @@ class carModel extends HTMLElement {
                 return;
             }
             const formData = Object.fromEntries(formRawData.entries());
-            // console.log((formData));
+            console.log((formData));
             const idFormatted = formData.carOwner.toString().concat("-", formData.carLicensePlate.toString());
             // console.log(idFormatted);
             const carDataFormatted = {
@@ -128,11 +146,14 @@ class carModel extends HTMLElement {
                 carCurrMilage: parseInt(formData.carCurrMilage),
                 cos_Id: formData.carOwner.toString(),
                 car_Registration_Date: new Date(),
-                cos_Id: formData.carOwner.toString(),
+                // cos_Id: formData.carOwner.toString(),
             };
             // this.dispatchEvent(new CustomEvent('submit'));
             this.sendData2server(carDataFormatted);
             form.reset();
+            licenseInput.removeAttribute('disabled');
+            licenseInput.placeholder = 'ABC12345';
+            // this.render();
         });
     }
 
@@ -199,6 +220,10 @@ class carModel extends HTMLElement {
         ownerSelect.appendChild(nullOwnerOpt)
         ownerSelect.appendChild(otherOwnerOpt);
 
+        //License and year section
+        const licenseRow = document.createElement('div');
+        licenseRow.classList.add('form-row');
+
         //Year input
         const yearLabel = document.createElement('label');
         const yearInput = document.createElement('input');
@@ -223,6 +248,17 @@ class carModel extends HTMLElement {
         licenseInput.type = 'text';
         licenseInput.placeholder = 'ABC12345';
         licenseInput.maxLength = 8;
+        licenseInput.dataset.license = "";
+
+        //License checkBox
+        const licenseCheckBoxLabel = document.createElement('label');
+        const licenseCheckBox = document.createElement('input');
+
+        licenseCheckBoxLabel.setAttribute('for', 'license Plate checkBox');
+        licenseCheckBoxLabel.textContent = 'No License:';
+        licenseCheckBox.setAttribute('name', 'carLicensePlate');
+        licenseCheckBox.type = 'checkbox';
+        licenseCheckBox.dataset.noLicense = '';
 
         //Current Milage input
         const currMilLabel = document.createElement('label');
@@ -252,21 +288,26 @@ class carModel extends HTMLElement {
 
         // Append once, in proper order
 
+        container.appendChild(ownerLabel);
+        container.appendChild(ownerSelect);
+        container.appendChild(document.createElement('br'));
         container.appendChild(manufacturerLabel);
         container.appendChild(manufacturerSelect);
         container.appendChild(document.createElement('br'));
         container.appendChild(modelLabel);
         container.appendChild(modelSelect);
         container.appendChild(document.createElement('br'));
-        container.appendChild(ownerLabel);
-        container.appendChild(ownerSelect);
-        container.appendChild(document.createElement('br'));
+
         container.appendChild(yearLabel);
         container.appendChild(yearInput);
-        container.appendChild(document.createElement('br'));
-        container.appendChild(licenseLabel);
-        container.appendChild(licenseInput);
-        container.appendChild(document.createElement('br'));
+
+        licenseRow.appendChild(licenseLabel);
+        licenseRow.appendChild(licenseInput);
+
+        licenseRow.appendChild(licenseCheckBoxLabel);
+        licenseRow.appendChild(licenseCheckBox);
+
+        container.appendChild(licenseRow);
         container.appendChild(currMilLabel);
         container.appendChild(currMilInput);
         container.appendChild(document.createElement('br'));
@@ -353,6 +394,10 @@ class carModel extends HTMLElement {
         this.sendNotification(res, res.show);
     }
 
+    getRandomInteger(min, max) {
+        return Math.ceil(Math.random()*10000);
+    }
+
     sendNotification(notification, flag) {
         console.log('Sending a notification ', notification);
         if (flag) {
@@ -369,6 +414,7 @@ class carModel extends HTMLElement {
             }));
         }
     }
+
 }
 
 

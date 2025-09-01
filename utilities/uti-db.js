@@ -18,8 +18,9 @@ const test = async function testDBConnection() {
         // console.log(rows);
         return{
             success: true,
-            data:'Everything is ok',
-            type: 'notification',
+            data: null,
+            message:'Everything is ok',
+            type: 'notification-good',
             error:null,
             origin: 'testDBConnection()',
             show: false,
@@ -29,10 +30,11 @@ const test = async function testDBConnection() {
         return{
             success: false,
             data:'Make sure XAMPP is started',
+            message:'Make sure XAMPP is started',
             type: 'notification-error',
+            error: 'Make sure XAMPP is started',
             origin: 'testDBConnection()',
             show: true,
-            error: 'Make sure XAMPP is started',
         }
     }
 }

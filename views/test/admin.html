@@ -14,6 +14,7 @@
     <meta name="theme-color" content="_color" />
     <link rel="icon" type="image/x-icon" href="../Img/" />
     <link href="/Css/admin-page.css" rel="stylesheet" type="text/css" />
+    <link href="/Css/notification.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body>
@@ -31,10 +32,15 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <!-- <button id="addClient">Add Client</button> -->
-      <a href="/Rays/Admin/Customers/addCustomerPage" target="_blank">Add Client</a>
-      <a href="/Rays/Admin/Cars/addCar" target="_blank">Add Car</a>
-      <a>Add Service</a>
-      <a>Add Mechanic</a>
+      <a
+        href="/Rays/Admin/Customers/addCustomerPage"
+        target="_blank"
+        data-add-client
+        >Add Client</a
+      >
+      <a href="/Rays/Admin/Cars/addCar" target="_blank" data-add-car>Add Car</a>
+      <a data-add-service>Add Service</a>
+      <a data-add-mechanic>Add Mechanic</a>
     </aside>
 
     <!-- Content -->
@@ -46,19 +52,11 @@
       <div class="card">Content 5</div>
       <div class="card">Content 6</div>
     </main>
+    <div
+      id="notifications-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 9999"
+    ></div>
   </body>
-  <script
-    type="text/javascript"
-    src="/Js/webElements/wE-add-new-customer-card.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="/Js/webElements/wE-car-registration-form-card.js"
-  ></script>
-  <script
-    type="text/javascript"
-    src="/Js/webElements/wE-car-modal-card.js"
-  ></script>
   <script type="text/javascript" src="/Js/test/admin-indexDB.js"></script>
   <script type="text/javascript" src="/Js/test/adminPage.js"></script>
 </html>
