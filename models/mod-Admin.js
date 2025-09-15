@@ -11,7 +11,7 @@ import seeRoute from "../routes/rou-SEE.js";
 
 
 //variable section
-const customerPage = path.join(rootPath.__rootDir, 'views', 'test', 'customerFinder.html');
+const customerPage = path.join(rootPath.__rootDir, 'views', 'Customers', 'customerPageInfo.html');
 const addCustomerPage = path.join(rootPath.__rootDir, 'views', 'customerRegistration.html');
 const adminPage = path.join(rootPath.__rootDir, 'views', 'test', 'admin.html');
 const carPage = path.join(rootPath.__rootDir, 'views', 'test', 'cars.html');
