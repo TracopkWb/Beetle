@@ -83,6 +83,7 @@ function showNotification(notification) {
         notDiv.classList.add(eventType);
         if (eventType === 'delete') {
             notDiv.textContent = `The customer ${notification.data.cosName} has been deleted`;
+            
         } else if (eventType === 'add') {
             notDiv.textContent = `${notification.message}`;
         }

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <title>Ray's Auto Electric</title>
+    <meta charset="UTF-8" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Admin Page" />
+    <meta property="og:image" content="_Image" />
+    <meta property="og:type" content="image/png" />
+    <meta property="og:image:width" content="500" />
+    <meta property="og:image:height" content="500" />
+    <meta property="og:description" content="Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="_color" />
+    <link rel="icon" type="image/x-icon" href="../Img/" />
+    <link href="/Css/admin-page.css" rel="stylesheet" type="text/css" />
+    <link href="/Css/notification.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="logo">MyLogo</div>
+      <div class="nav-links">
+        <a href="/Rays/Admin/Cars" target="_blank">Cars</a>
+        <a href="/Rays/Admin/Customers" target="_blank">Customers</a>
+        <a href="/Rays/Admin/Services" target="_blank">Services</a>
+      </div>
+      <button class="logout-btn">Logout</button>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- <button id="addClient">Add Client</button> -->
+      <input
+        type="text"
+        id="search"
+        placeholder="Search by name, plate, or phone..."
+      />
+      <ul id="results"></ul>
+      <customer-agenda-result-card></customer-agenda-result-card>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+      <div>Data</div>
+    </main>
+    <div
+      id="notifications-container"
+      style="position: fixed; top: 20px; right: 20px; z-index: 9999"
+    ></div>
+  </body>
+  <script
+    type="module"
+    src="/Js/webElements/wE-customer-agenda-card.js"
+  ></script>
+  <script type="module" src="/Js/js-updateIndexDB.js"></script>
+  <script type="module" src="/Js/js-customerPageInfoPage.js"></script>
+</html>
