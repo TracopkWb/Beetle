@@ -19,6 +19,8 @@ class customerAgenda extends HTMLElement {
 
     connectedCallback() {
         this.shadowRoot.addEventListener('click', (e) => {
+            let customerName = e.target.closest('[data-card-container]').dataset.customerName;
+            let customerPhone = e.target.closest('[data-card-container]').dataset.customerPhone;
             let customerId;
             if (e.target.matches('[data-action="edit"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
@@ -30,9 +32,11 @@ class customerAgenda extends HTMLElement {
             }
             if (e.target.matches('[data-action="delete"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
-                console.log("Clicked delete",customerId);
-                this.deleteCustomer(customerId);
-                this.removeCustomer(customerId);
+                console.log("Clicked delete", customerId,);
+                if (confirm(`Are you sure you want to delete ${customerName} with phone: ${customerPhone}`)) {
+                    this.deleteCustomer(customerId);
+                    this.removeCustomer(customerId);
+                }
             }
         });
     }
@@ -51,22 +55,22 @@ class customerAgenda extends HTMLElement {
         this.shadowRoot.appendChild(this.cardContainerResult);
     }
 
-    removeCustomers(){
+    removeCustomers() {
         Array.from(this.cardContainerResult.children).forEach(child => {
             // console.log(child[1].attributes[2].value);
             child.remove();
-            
+
         });
     }
 
-    removeCustomer(customerId){
+    removeCustomer(customerId) {
         // console.log(customerId,this.cardContainerResult.children);
-         Array.from(this.cardContainerResult.children).forEach(child => {
+        Array.from(this.cardContainerResult.children).forEach(child => {
             // console.log(child.attributes[2].value);
             if (child.attributes[2].value === customerId) {
                 child.remove();
             }
-            
+
         });
     }
 
@@ -77,6 +81,8 @@ class customerAgenda extends HTMLElement {
         customerCard.dataset.cardContainer = '';
 
         customerCard.dataset.costumerId = cus['cos_Id'];
+        customerCard.dataset.customerName = cus.cosName;
+        customerCard.dataset.customerPhone = cus.cosPhone;
 
         //Costumer Photo
         const cusAvatar = document.createElement('img');
