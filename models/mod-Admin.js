@@ -17,6 +17,8 @@ const adminPage = path.join(rootPath.__rootDir, 'views', 'test', 'admin.html');
 const carPage = path.join(rootPath.__rootDir, 'views', 'test', 'cars.html');
 const addCarPage = path.join(rootPath.__rootDir, 'views', 'carRegistration.html');
 const servicePage = path.join(rootPath.__rootDir, 'views', 'test', 'services.html');
+const customerViewPage = path.join(rootPath.__rootDir, 'views', 'test', 'test-customerView.html');
+const customerEditPage = path.join(rootPath.__rootDir, 'views', 'test', 'test-customerEdit.html');
 const neutralImage = path.join(rootPath.__rootDir, 'public', 'Img', 'customer.png');
 
 //Initializing Router
@@ -164,6 +166,17 @@ const postNewCustomer = async (req, res) => {
         });
     }
 }
+
+const testingCustomerViewServer = async(req,res)=>{
+    console.log('Testing cx page', req.params);
+    res.sendFile(customerViewPage);
+}
+
+const testEditCustomer = async(req,res)=>{
+    console.log('Testing cx edit page', req.params);
+    res.sendFile(customerEditPage);
+}
+
 
 //////////////Cars Routing
 const getCarsPage = async (req, res) => {
@@ -329,6 +342,9 @@ export default {
     getCustomerInfo: getCustomerInfo,
     deleteCustomer: deleteCustomer,
     postNewCustomer: postNewCustomer,
+    testEditCustomer:testEditCustomer,
+    testingCustomerView:testingCustomerViewServer,
+    
 
     getCarsPage: getCarsPage,
     getAddNewCarPage: getAddNewCarPage,

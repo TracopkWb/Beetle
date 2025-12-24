@@ -77,6 +77,35 @@ function removeChildren(parent) {
 }
 
 
+  const comp = document.querySelector('customer-agenda-result-card');
+  comp.addEventListener("view-data", async (e) => {
+    
+    console.log(e);
+    const customerCard = document.querySelector('customer-full-info-card');
+    
+    console.log("Button event from web component!", e.detail.customerId,
+        customerCard, customerCard.shadowRoot.childNodes
+    );
+    const reqCustomer2Server = fetch(`http://tracopk.ddns.net/Rays/Admin/Customers/infoPage/${e.detail.customerId}`,{
+        method: 'GET'
+      });
+      const rawSerRes = await reqCustomer2Server;
+      const fetchedCustomer = await rawSerRes.json();
+      console.log(rawSerRes);
+      if (rawSerRes.ok) {
+        console.log(fetchedCustomer.data);
+        console.log(customerCard);
+        customerCard.data = fetchedCustomer.data;
+      }
+  });
+  
+  function removeChildrenOnCustomerCard(){
+    const customerCard = document.querySelector('customer-full-info-card');
+
+    while (customerCard.hasChildNodes) {
+        customerCard.removeChild();
+    }
+  }
 
 // /////////////Notification Js
 // document.addEventListener("notify", (e) => {

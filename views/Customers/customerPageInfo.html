@@ -32,18 +32,20 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <!-- <button id="addClient">Add Client</button> -->
-      <input
+      <div class="input-div">
+        <input
         type="text"
         id="search"
         placeholder="Search by name, plate, or phone..."
       />
+      </div>
       <ul id="results"></ul>
       <customer-agenda-result-card></customer-agenda-result-card>
     </aside>
 
     <!-- Content -->
     <main class="content">
-      <div>Data</div>
+      <customer-full-info-card></customer-full-info-card>
     </main>
     <div
       id="notifications-container"
@@ -53,6 +55,10 @@
   <script
     type="module"
     src="/Js/webElements/wE-customer-agenda-card.js"
+  ></script>
+   <script
+    type="module"
+    src="/Js/webElements/wE-customer-full-info.js"
   ></script>
   <script type="module" src="/Js/js-updateIndexDB.js"></script>
   <script type="module" src="/Js/js-customerPageInfoPage.js"></script>

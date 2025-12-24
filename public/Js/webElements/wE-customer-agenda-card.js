@@ -29,6 +29,17 @@ class customerAgenda extends HTMLElement {
             if (e.target.matches('[data-action="view"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;
                 console.log("Clicked view", customerId);
+                this.dispatchEvent(new CustomEvent("view-data", {
+                    detail: { customerId },
+                    bubbles: true,
+                    composed: true
+                }));
+
+                // this.dispatchEvent(new CustomEvent("view-data", {
+                //     detail: { customerId },   // or { data: customerId } if you prefer
+                //     bubbles: true,
+                //     composed: true
+                // }));
             }
             if (e.target.matches('[data-action="delete"]')) {
                 customerId = e.target.closest('[data-card-container]').dataset.costumerId;

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer Card</title>
+    <link
+      href="/Css/customer-data-visualization.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <style>
+      /* Base Card */
+      .customer-card {
+        max-width: 350px;
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        padding: 20px;
+        border: 1px solid #eee;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .customer-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+      }
+
+      /* Header */
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .customer-name {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .customer-id {
+        font-size: 0.85rem;
+        color: #888;
+      }
+
+      /* Body */
+      .card-body {
+        color: #555;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+
+      /* Buttons */
+      .card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .btn {
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.1s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      /* Button Styles */
+      .edit-btn {
+        background-color: #007bff;
+        color: white;
+      }
+
+      .edit-btn:hover {
+        background-color: #0069d9;
+      }
+
+      .delete-btn {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .delete-btn:hover {
+        background-color: #c82333;
+      }
+
+      /* Responsive */
+      @media (max-width: 500px) {
+        .customer-card {
+          max-width: 100%;
+          padding: 15px;
+        }
+
+        .card-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- <div class="card-container" id="customerCard"></div> -->
+    <!-- <div class="customer-card">
+      <div class="card-header">
+        <h2 class="customer-name">John Doe</h2>
+        <span class="customer-id">Customer ID: 1023</span>
+      </div>
+
+       <div class="card-body">
+        <p><strong>Email:</strong> johndoe@email.com</p>
+        <p><strong>Phone:</strong> +1 (555) 123-4567</p>
+        <p><strong>Company:</strong> ACME Industries</p>
+        <p><strong>Address:</strong> 1234 Market St, San Francisco, CA</p>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn edit-btn" onclick="editCustomer(1023)">Edit</button>
+        <button class="btn delete-btn" onclick="deleteCustomer(1023)">
+          Delete
+        </button>
+      </div>
+    </div> -->
+
+    <customer-full-info-card></customer-full-info-card>
+    <script>
+      const sampleCustomer = {
+        id: "c_001",
+        firstName: "Carlos",
+        lastName: "Ramírez",
+        email: "c.ramirez@example.com",
+        phone: "+52 55 1234 5678",
+        address: "Av. Reforma 123, Mexico City",
+        notes:
+          "Prefers morning appointments. Has pending recall on 2018 model.",
+        avatar: "https://placehold.co/128x128?text=ZaTe",
+        cars: [
+          {
+            id: "car_01",
+            make: "Honda",
+            model: "Civic",
+            year: 2018,
+            plate: "ABC-123",
+            vin: "1HGBH41JXMN109186",
+            color: "Blue",
+            thumbnail: "https://placehold.co/96x60?text=Civic",
+          },
+          {
+            id: "car_02",
+            make: "Toyota",
+            model: "Corolla",
+            year: 2021,
+            plate: "XYZ-987",
+            vin: "2T1BURHE0KC123456",
+            color: "White",
+            thumbnail: "https://placehold.co/96x60?text=Corolla",
+          },
+        ],
+      };
+
+      function renderCustomerCard(customer) {
+        const container = document.getElementById("customerCard");
+        container.innerHTML = `
+        <div class="card-header">
+          <img src="${customer.avatar}" alt="${customer.firstName} ${
+          customer.lastName
+        }" />
+          <div class="info">
+            <h2>${customer.firstName} ${customer.lastName}</h2>
+            ${customer.phone ? `<p>${customer.phone}</p>` : ""}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="cars-title">
+            <span>Cars</span>
+          </div>
+          <ul class="cars-list">
+            ${
+              !customer.cars || customer.cars.length === 0
+                ? "<p>No cars registered.</p>"
+                : customer.cars
+                    .map(
+                      (car) => `
+              <li class="car-item">
+                <img src="${car.thumbnail}" alt="${car.make} ${car.model}" />
+                <div class="car-details">
+                  <p><strong>${car.year} ${car.make} ${car.model}</strong></p>
+                  <p>${car.color || "-"} • VIN: ${car.vin || "-"}</p>
+                  <p>Plate: ${car.plate || "No plate"}</p>
+                  <div class="car-actions">
+                    <button>View</button>
+                    <button>Edit</button>
+                    <button>Service history</button>
+                  </div>
+                </div>
+              </li>`
+                    )
+                    .join("")
+            }
+          </ul>
+          ${
+            customer.notes
+              ? `<div class="notes"><strong>Notes:</strong> ${customer.notes}</div>`
+              : ""
+          }
+        </div>
+      `;
+      }
+
+      renderCustomerCard(sampleCustomer);
+    </script>
+  </body>
+  <script type="module" src="/Js/webElements/wE-customer-full-info.js"></script>
+  <script>
+    addEventListener("DOMContentLoaded", async (event) => {
+      const activeURL = new URL(window.location);
+      console.log(
+        activeURL.pathname.split("/")[activeURL.pathname.split("/").length - 1]
+      );
+      const customerID2LookFor =
+        activeURL.pathname.split("/")[activeURL.pathname.split("/").length - 1];
+      const reqCustomer2Server = fetch(
+        `http://tracopk.ddns.net/Rays/Admin/Customers/infoPage/${customerID2LookFor}`,
+        {
+          method: "GET",
+        }
+      );
+      const rawServerResponse = await reqCustomer2Server;
+      const fetchedCustomer = await rawServerResponse.json();
+      console.log(rawServerResponse);
+      if (rawServerResponse.ok) {
+        console.log(fetchedCustomer.data);
+        const customerCard = document.querySelector("customer-full-info-card");
+        console.log(customerCard);
+        customerCard.data = fetchedCustomer.data;
+      }
+    });
+  </script>
+</html>

@@ -34,11 +34,14 @@ router.get('/Customers/addCustomerPage',adminFile.getAddNewCustomerPage);
 router.get('/Customers/infoPage/',adminFile.getCustomerInfo);
 router.get('/Customers/infoPage/:customer_Id',adminFile.getCustomerInfo);
 router.get('/Customers/CustomersList/:hashed_id',adminFile.getCustomers);
+
+router.get("/Customers/ViewTest/:customerId", adminFile.testingCustomerView);
+router.get("/Customers/Edit/:customerId",adminFile.testingCustomerView);
 router.delete('/Customers/Delete/:customerId', adminFile.deleteCustomer);
 router.post("/Customers/Post/newCustomer",adminFile.postNewCustomer);
 
-///////SERVICES ROUTING
 
+///////SERVICES ROUTING
 //URL-> /Admin/Services
 router.get('/Services/',adminFile.getServicesPage);
 router.get('/Services/:service_Id',adminFile.getServiceInfo);

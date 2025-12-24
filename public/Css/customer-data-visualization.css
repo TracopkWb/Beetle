@@ -1,0 +1,182 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f3f4f6;
+    margin: 0;
+    padding: 20px;
+}
+
+.card-container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    gap: 16px;
+    align-items: center;
+}
+
+.card-header img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.card-header .info {
+    flex: 1;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 2.30rem;
+}
+
+.card-header p {
+    margin: 2px 0;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.card-name-section {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-body {
+    padding: 20px;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.cars-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+}
+
+.cars-list {
+    margin-top: 12px;
+    list-style: none;
+    padding: 0;
+}
+
+.car-item {
+    display: flex;
+    gap: 12px;
+    background: #f9fafb;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.car-item img {
+    width: 100px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.car-details p {
+    margin: 2px 0;
+    /* font-size: 0.85rem; */
+    /* font-weight: 500; */
+}
+
+.button{
+    margin-right: 6px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+}
+
+.edit-button{
+    background: #007BFF;
+}
+
+.save-button{
+    background: #2b7928d5;
+}
+
+
+.car-actions button {
+    margin-right: 6px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    /* background: #e5e7eb; */
+}
+
+.car-actions .view {
+    margin-right: 6px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #17A2B8;
+}
+
+.car-actions .edit {
+    background: #007BFF;
+}
+
+.car-actions .service {
+    background: #6C757D;
+}
+
+.car-actions .delete {
+    background: #ef4444;
+}
+
+
+.card-buttons-section {
+    display: flex;
+    justify-content: right;
+    margin: 10px;
+}
+
+.card-buttons-section button {
+    border: none;
+    padding: 8px 30px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.card-buttons-section .edit-button {
+    background-color: #007bff;
+    color: white;
+    margin-right: 20px;
+}
+
+
+.notes {
+    margin-top: 15px;
+    background: #fef9c3;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* editable Section */
+
+.hidden-element {
+    display: none;
+}
