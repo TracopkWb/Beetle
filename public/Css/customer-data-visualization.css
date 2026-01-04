@@ -1,11 +1,12 @@
 body {
+
     font-family: Arial, sans-serif;
     background: #f3f4f6;
     margin: 0;
     padding: 20px;
 }
 
-.card-container {
+.cx-card-container {
     max-width: 800px;
     margin: 0 auto;
     background: #fff;
@@ -16,41 +17,49 @@ body {
     overflow: hidden;
 }
 
-.card-header {
+/* .card-header {
     display: flex;
     padding: 20px;
     border-bottom: 1px solid #eee;
     gap: 16px;
     align-items: center;
+} */
+
+.cx-info-pic-section {
+    width: 10%;
+    margin: 1rem;
 }
 
-.card-header img {
+.cx-info-pic-section>img {
     width: 80px;
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
 }
 
-.card-header .info {
-    flex: 1;
+.cx-info-data-section {
+    width: 80%;
 }
 
-.card-header h2 {
-    margin: 0;
-    font-size: 2.30rem;
+.cx-info-id-section {
+    width: 10%;
 }
 
-.card-header p {
-    margin: 2px 0;
+.cx-info-id-section p {
+    margin: 1.2rem 0.5rem;
     color: #555;
     font-size: 0.9rem;
 }
 
-.card-name-section {
-    display: flex;
-    justify-content: space-between;
-}
+.cars-section {}
 
+/* .card-name-section,
+.cars-section {
+    display: flex;
+    height: 10rem;
+    justify-content: space-between;
+    background-color: #555;
+} */
 .card-body {
     padding: 20px;
     max-height: 60vh;
@@ -93,7 +102,8 @@ body {
     /* font-weight: 500; */
 }
 
-.button{
+/* 
+.button {
     margin-right: 6px;
     padding: 4px 8px;
     font-size: 0.9rem;
@@ -103,47 +113,16 @@ body {
     color: white;
 }
 
-.edit-button{
+.edit-button {
     background: #007BFF;
 }
 
-.save-button{
+.save-button {
     background: #2b7928d5;
-}
+} */
 
 
-.car-actions button {
-    margin-right: 6px;
-    padding: 4px 8px;
-    font-size: 0.9rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    color: white;
-    /* background: #e5e7eb; */
-}
 
-.car-actions .view {
-    margin-right: 6px;
-    padding: 4px 8px;
-    font-size: 0.8rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    background: #17A2B8;
-}
-
-.car-actions .edit {
-    background: #007BFF;
-}
-
-.car-actions .service {
-    background: #6C757D;
-}
-
-.car-actions .delete {
-    background: #ef4444;
-}
 
 
 .card-buttons-section {
@@ -180,3 +159,136 @@ body {
 .hidden-element {
     display: none;
 }
+
+
+
+/* Input disabled */
+
+input[name="cxName"] {
+    font-size: 2em;
+}
+
+input:read-only {
+    color: #000;
+    background-color: #fff;
+}
+
+input {
+    pointer-events: auto;
+    caret-color: black;
+    background-color: #DDDDDD;
+    width: auto;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.form-button {
+    width: 50px;
+}
+
+fieldset {
+    border: 1px solid #ddd;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+legend {
+    font-weight: 600;
+    padding: 0 0.5rem;
+}
+
+label {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #444;
+}
+
+input {
+    padding: 0.6rem;
+    font-size: 1rem;
+    color: #000;
+    border: none;
+}
+
+.form-group {
+    /* display: flex;
+  flex-direction: column; */
+    /* margin-bottom: 1rem; */
+}
+
+
+
+.cx-info-section {
+    display: flex;
+    align-items: center;
+}
+
+.cx-info-id-section {
+    align-self: baseline;
+    margin-left: auto;
+}
+
+.cxForm {
+    display: flex;
+    flex-direction: column;
+}
+
+form>button {
+    display: flex;
+}
+
+
+/********** Buttons styling **********/
+button {
+    margin-right: 6px;
+    padding: 4px 8px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #FFF;
+    width: 5rem;
+    height: 2rem;
+}
+
+.edit {
+    background: #007BFF;
+}
+
+.service {
+    background: #6C757D;
+}
+
+.delete,
+.cancel {
+    background: #ef4444;
+}
+
+.view {
+    background: #17A2B8;
+}
+
+.save {
+    background: #4E8F4B;
+}
+
+.car-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+
+/*
+
+input:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+  */
