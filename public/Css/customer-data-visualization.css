@@ -17,13 +17,6 @@ body {
     overflow: hidden;
 }
 
-/* .card-header {
-    display: flex;
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    gap: 16px;
-    align-items: center;
-} */
 
 .cx-info-pic-section {
     width: 10%;
@@ -38,11 +31,7 @@ body {
 }
 
 .cx-info-data-section {
-    width: 80%;
-}
-
-.cx-info-id-section {
-    width: 10%;
+    width: 60%;
 }
 
 .cx-info-id-section p {
@@ -51,7 +40,13 @@ body {
     font-size: 0.9rem;
 }
 
-.cars-section {}
+.cars-section {
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-height: 70vh;
+}
 
 /* .card-name-section,
 .cars-section {
@@ -79,6 +74,11 @@ body {
     padding: 0;
 }
 
+.car-pic {
+    display: flex;
+    flex-direction: column;
+}
+
 .car-item {
     display: flex;
     gap: 12px;
@@ -87,6 +87,7 @@ body {
     border-radius: 10px;
     margin-bottom: 10px;
     align-items: center;
+    justify-content: center;
 }
 
 .car-item img {
@@ -216,21 +217,29 @@ input {
 }
 
 .form-group {
-    /* display: flex;
-  flex-direction: column; */
-    /* margin-bottom: 1rem; */
+    display: flex;
+    align-items: baseline;
+    margin: .1rem;
+    justify-content: space-between;
 }
 
-
+.form-buttons-group {
+    display: flex;
+    justify-content: center;
+    margin: .5rem;
+}
 
 .cx-info-section {
     display: flex;
     align-items: center;
+    justify-content: space-around;
+    height: 20%;
+    flex-shrink: 0;
 }
 
 .cx-info-id-section {
     align-self: baseline;
-    margin-left: auto;
+    /* width: 10%; */
 }
 
 .cxForm {

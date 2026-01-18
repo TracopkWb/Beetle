@@ -78,7 +78,7 @@ class customerFullData extends HTMLElement {
 
         //1.1.3.a-Cx Id
         const cxId = document.createElement('p');
-        cxId.dataset.cxIdLabel = '';
+        cxId.dataset.cxElement = 'IdTag';
 
         //2 Car Section
         const carSection = document.createElement('div');
@@ -165,6 +165,10 @@ class customerFullData extends HTMLElement {
         cxImg.src = `https://placehold.co/128x128?text=${cxData.cos_Id.slice(0, 4)}`;
         cxImg.alt = `${cxData.cos_Id}`;
 
+        //Cx Id tag
+        const cxIdTag = this.fullCustomerCard.querySelector('[data-cx-element = "IdTag"]');
+        cxIdTag.textContent = `${cxData.cos_Id}`
+        console.log(cxIdTag)
         //Cx form
         const cxForm = this.fullCustomerCard.querySelector('[data-form-for="cx"]');
         cxForm.setAttribute('data-id', `${cxData.cos_Id}`);
@@ -245,12 +249,13 @@ class customerFullData extends HTMLElement {
         cars.map(car => {
             // console.log(car);
             ////////////Car Card Form
-            const carCard = document.createElement('li');
+            const carCard = document.createElement('div');
             carCard.classList.add('car-item');
             carCard.dataset.id = `${car.car_Id}`;
 
             ////////////Car Picture Section           
             const carPicSection = document.createElement('div');
+            carPicSection.classList.add('car-pic')
             const carImg = document.createElement('img');
             carImg.src = `https://placehold.co/96x60?text=${car.carModel}`;
             carImg.alt = `${car.car_id}`;
@@ -308,23 +313,26 @@ class customerFullData extends HTMLElement {
             const carVINLabel = document.createElement('label');
             carVINLabel.for = 'VIN';
             carVINLabel.textContent = 'VIN: ';
-
+            
             const carVINInput = document.createElement('input');
             carVINInput.value = `${car.carVIN ?? 'Not provided'}`;
             carVINInput.setAttribute('name', 'carVIN');
             carVINInput.readOnly = true;
-
+            
             /////License Plate input
             const carLicenseGroup = document.createElement('div');
             carLicenseGroup.classList.add('form-group');
             const carLicensePlateLabel = document.createElement('label');
             carLicensePlateLabel.for = 'License Plate';
             carLicensePlateLabel.textContent = 'License Plate: ';
-
+            
             const carLicensePlateInput = document.createElement('input');
             carLicensePlateInput.value = `${car.carLicensePlate ?? 'Not provided'}`;
             carLicensePlateInput.setAttribute('name', 'carLicense');
             carLicensePlateInput.readOnly = true;
+            
+            const formEditingButtonsGroup = document.createElement('div');
+            formEditingButtonsGroup.classList.add('form-buttons-group');
 
             //Form Save button 
             const saveCarButton = document.createElement('button');
@@ -332,7 +340,7 @@ class customerFullData extends HTMLElement {
             saveCarButton.hidden = true;
             saveCarButton.dataset.buttonOrigin = 'car-form-save';
             saveCarButton.dataset.actionFor = 'car';
-            saveCarButton.dataset.action = 'cancel';
+            saveCarButton.dataset.action = 'save';
             saveCarButton.dataset.id = `${car.car_Id}`;
             saveCarButton.textContent = 'Save';
             saveCarButton.classList.add('save');
@@ -376,6 +384,7 @@ class customerFullData extends HTMLElement {
 
             ////////////Appending components
             carPicSection.appendChild(carImg);
+            carPicSection.appendChild(editCarFormButton);
             carFormFieldset.appendChild(carFormLegend);
             carYearGroup.appendChild(carYearLabel);
             carYearGroup.appendChild(carYearInput);
@@ -392,18 +401,20 @@ class customerFullData extends HTMLElement {
             carLicenseGroup.appendChild(carLicensePlateLabel);
             carLicenseGroup.appendChild(carLicensePlateInput);
             carFormFieldset.appendChild(carLicenseGroup);
-            carFormFieldset.appendChild(saveCarButton);
-            carFormFieldset.appendChild(cancelCarButton);
+
+            formEditingButtonsGroup.appendChild(saveCarButton);
+            formEditingButtonsGroup.appendChild(cancelCarButton);
+            carFormFieldset.appendChild(formEditingButtonsGroup);
             carForm.appendChild(carFormFieldset);
             carDetailSection.appendChild(carForm);
-            carButtonsSection.appendChild(editCarFormButton);
+            // carButtonsSection.appendChild(editCarFormButton);
             // carDetailCard.appendChild(buttonSections);
-            carButtonsSection.appendChild(editCarFormButton);
+            // carButtonsSection.appendChild(editCarFormButton);-
             // carButtonsSection.appendChild(deleteCarFormButton);
             // carDetailSec.appendChild(carImg);
             carCard.appendChild(carPicSection);
             carCard.appendChild(carDetailSection);
-            carCard.appendChild(carButtonsSection);
+            // carCard.appendChild(carButtonsSection);
             section.appendChild(carCard);
         });
     }
