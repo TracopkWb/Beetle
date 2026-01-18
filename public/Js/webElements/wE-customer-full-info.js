@@ -10,6 +10,10 @@ class customerFullData extends HTMLElement {
             styleLink.type = "text/css",
             this.shadowRoot.append(styleLink);
         this.fullCustomerCard;
+        this.initialState = {
+            "cxForm": null,
+            "carsForms": []
+        };
         // this.isEditing = false;
 
         //1-Cx card
@@ -105,47 +109,91 @@ class customerFullData extends HTMLElement {
     connectedCallback() {
         this.shadowRoot.addEventListener('click', (e) => {
             e.preventDefault();
-            let selectedRawButton = e.target ?? null;
-            let selectedButton = {
-                id: selectedRawButton.getAttribute('data-id'),
-                // carId: selectedRawButton.getAttribute('data-id') ?? null,
-                for: selectedRawButton.getAttribute('data-action-for'),
-                action: selectedRawButton.getAttribute('data-action')
-            }
-            console.log(selectedButton);
-            if (selectedButton.for === 'cx') {
-                if (selectedButton.action === 'edit') {
+            console.log(e.target)
+            let selectedElementRaw = e.target ?? null;
+            let selectedElement = selectedElementRaw.dataset;
+            const form = this.shadowRoot.querySelector(`form[data-id="${selectedElement.id}"]`)
+            console.log(selectedElement);
+            let selectedCarId = selectedElement.id;
+            if (selectedElement.actionFor === 'cx') {
+                if (selectedElement.action === 'edit') {
                     console.log('Editing cx!');
-                    this.toggleEditMode(selectedButton.id, false);
-                    console.log(this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`))
-                    const cxForm = this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`)
-                    cxForm.addEventListener('input',()=>{
-                        
+                    this.toggleShowMode(selectedElement.id, false);
+                    form.addEventListener('input', () => {
+                        // console.log(this.initialState['cxForm'])
+                        const somethingChangedFlagInCxForm = JSON.stringify(this.serializeForm(form)) !== JSON.stringify(this.initialState['cxForm']);
+                        // console.log(somethingChangedFlagInCxForm)
+                        if (somethingChangedFlagInCxForm) {
+                            this.enableButtons(selectedElement.id, !somethingChangedFlagInCxForm);
+                        }
                     })
-                } else if (selectedButton.action === 'save') {
+                } else if (selectedElement.action === 'save') {
                     console.log('Saving cx!');
-                    this.toggleEditMode(selectedButton.id, false);
-                } else if (selectedButton.action === 'cancel') {
+                    this.toggleShowMode(selectedElement.id, false);
+                    this.enableButtons(selectedElement.id, true);
+                    const currState = new FormData(form);
+                    // console.log(currState)
+                    // console.log(this.initialState.cxForm)
+                    if (JSON.stringify(currState) === JSON.stringify(this.initialState.cxForm)) {
+                        alert("No changes to save");
+                        return;
+                    }
+                    this.initialState.cxForm = Object.fromEntries(currState.entries());
+                    // console.log(this.initialState.cxForm)
+
+                } else if (selectedElement.action === 'cancel') {
                     console.log('Cancel Action!');
-                    this.toggleEditMode(selectedButton.id, false);
+                    this.toggleShowMode(selectedElement.id, false);
+                    this.enableButtons(selectedElement.id, true);
+                    this.restoreForm(form, this.initialState['cxForm'])
                 }
-                
-                console.log(`Cx data: ${selectedButton.id}`);
-            } else if (selectedButton.for === 'car') {
-                if (selectedButton.action === 'edit') {
+
+                console.log(`Cx data: ${selectedElement.id}`);
+            } else if (selectedElement.actionFor === 'car') {
+                console.log(selectedCarId)
+                let selectedCar = this.initialState.carsForms.find(car => car.carLicense == selectedCarId.split('-')[1]);
+                if (selectedElement.action === 'edit') {
                     console.log('Editing cx!');
-                    this.toggleEditMode(selectedButton.id, false);
-                    console.log(this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`))
-                } else if (selectedButton.action === 'save') {
+                    this.toggleShowMode(selectedElement.id, false);
+                    console.log(form)
+                    form.addEventListener('input', () => {
+                        // console.log(selectedCar);
+                        const somethingChangedFlagInCxForm = JSON.stringify(this.serializeForm(form)) !== JSON.stringify(selectedCar);
+                        // console.log(somethingChangedFlagInCxForm):
+                        if (somethingChangedFlagInCxForm) {
+                            this.enableButtons(selectedElement.id, !somethingChangedFlagInCxForm);
+                        }
+                    })
+                } else if (selectedElement.action === 'save') {
                     console.log('Saving cx!');
-                    this.toggleEditMode(selectedButton.id, false);
-                } else if (selectedButton.action === 'cancel') {
+                    this.toggleShowMode(selectedElement.id, false);
+                    this.enableButtons(selectedElement.id, true);
+                    const currentValues = Object.fromEntries(new FormData(form).entries());
+                    console.log(currentValues)
+                    if (JSON.stringify(currentValues) === JSON.stringify(selectedCar)) {
+                        alert("No changes to save");
+                        return;
+                    }
+                    this.initialState.carsForms = this.initialState.carsForms.map(car => {
+                        const baseLicense = selectedCar.carLicense.split('-')[0];
+
+                        if (car.carLicense === baseLicense) {
+                            console.log('Car Found');
+                            return { ...car, ...currentValues };
+                        }
+                        return car;
+                    });
+                    console.log(this.initialState)
+
+                } else if (selectedElement.action === 'cancel') {
                     console.log('Cancel Action!')
-                    this.toggleEditMode(selectedButton.id, false);
+                    this.toggleShowMode(selectedElement.id, false);
+                    this.enableButtons(selectedElement.id, true);
+                    this.restoreForm(form, selectedCar);
                 }
 
             }
-            
+
         });
 
     }
@@ -215,9 +263,11 @@ class customerFullData extends HTMLElement {
         // console.log(carListSection);
         this.populateCarsInfo(carListSection, cxData.cusCars);
 
+        this.initialState["cxForm"] = this.serializeForm(cxForm);
+        console.log(this.initialState)
     }
 
-    toggleEditMode(id, showInputs) {
+    toggleShowMode(id, showInputsFlag) {
         const disabledInputs = this.fullCustomerCard.querySelector(`form[data-id= "${id}"]`);
         const hiddenButtons = this.fullCustomerCard.querySelectorAll(`button[data-id= "${id}"]`);
         // console.log(disabledInputs, hiddenButtons);
@@ -226,23 +276,28 @@ class customerFullData extends HTMLElement {
             // console.log(element.name, element.value);
             if (element.readOnly) {
                 // console.log(element);
-                element.readOnly = showInputs;
+                element.readOnly = showInputsFlag;
             } else {
                 // console.log(element)''
-                element.readOnly = !showInputs;
+                element.readOnly = !showInputsFlag;
             }
         }
 
         hiddenButtons.forEach(button => {
             if (button.hidden) {
-                button.hidden = showInputs;
+                button.hidden = showInputsFlag;
             } else {
-                button.hidden = !showInputs;
+                button.hidden = !showInputsFlag;
             }
         });
 
     }
 
+    enableButtons(id, enableFlag) {
+        const disabledSaveButton = this.fullCustomerCard.querySelector(`button[data-id="${id}"][data-action="save"]`);
+        console.log(disabledSaveButton, enableFlag);
+        disabledSaveButton.disabled = enableFlag;
+    }
 
     populateCarsInfo(section, cars) {
         while (section.firstChild) {
@@ -320,24 +375,24 @@ class customerFullData extends HTMLElement {
             const carVINLabel = document.createElement('label');
             carVINLabel.for = 'VIN';
             carVINLabel.textContent = 'VIN: ';
-            
+
             const carVINInput = document.createElement('input');
             carVINInput.value = `${car.carVIN ?? 'Not provided'}`;
             carVINInput.setAttribute('name', 'carVIN');
             carVINInput.readOnly = true;
-            
+
             /////License Plate input
             const carLicenseGroup = document.createElement('div');
             carLicenseGroup.classList.add('form-group');
             const carLicensePlateLabel = document.createElement('label');
             carLicensePlateLabel.for = 'License Plate';
             carLicensePlateLabel.textContent = 'License Plate: ';
-            
+
             const carLicensePlateInput = document.createElement('input');
             carLicensePlateInput.value = `${car.carLicensePlate ?? 'Not provided'}`;
             carLicensePlateInput.setAttribute('name', 'carLicense');
             carLicensePlateInput.readOnly = true;
-            
+
             const formEditingButtonsGroup = document.createElement('div');
             formEditingButtonsGroup.classList.add('form-buttons-group');
 
@@ -352,7 +407,7 @@ class customerFullData extends HTMLElement {
             saveCarButton.textContent = 'Save';
             saveCarButton.classList.add('save');
             saveCarButton.disabled = true;
-            
+
             //Form Cancel button 
             const cancelCarButton = document.createElement('button');
             cancelCarButton.type = 'button';
@@ -369,7 +424,7 @@ class customerFullData extends HTMLElement {
             carButtonsSection.classList.add('car-actions');
             // const viewBtn = document.createElement('button'),
             const editCarFormButton = document.createElement('button')
-                // , deleteCarFormButton = document.createElement('button');
+            // , deleteCarFormButton = document.createElement('button');
 
 
             editCarFormButton.setAttribute('data-action-for', `car`);
@@ -424,7 +479,37 @@ class customerFullData extends HTMLElement {
             carCard.appendChild(carDetailSection);
             // carCard.appendChild(carButtonsSection);
             section.appendChild(carCard);
+            this.initialState["carsForms"].push(this.serializeForm(carForm))
         });
+        console.log(this.initialState["carsForms"])
+    }
+
+    serializeForm(form) {
+        const obj = {};
+
+        for (const el of form.elements) {
+            if (!el.name || el.disabled) continue;
+
+            if (el.type === "checkbox") {
+                obj[el.name] = el.checked;
+            } else {
+                obj[el.name] = el.value;
+            }
+        }
+
+        return obj;
+    }
+
+    restoreForm(form, state) {
+        for (const el of form.elements) {
+            if (!el.name || !(el.name in state)) continue;
+
+            if (el.type === "checkbox") {
+                el.checked = state[el.name];
+            } else {
+                el.value = state[el.name];
+            }
+        }
     }
 
 
