@@ -35,8 +35,9 @@ router.get('/Customers/infoPage/',adminFile.getCustomerInfo);
 router.get('/Customers/infoPage/:customer_Id',adminFile.getCustomerInfo);
 router.get('/Customers/CustomersList/:hashed_id',adminFile.getCustomers);
 
+
 router.get("/Customers/ViewTest/:customerId", adminFile.testingCustomerView);
-router.get("/Customers/Edit/:customerId",adminFile.testingCustomerView);
+router.get("/Customers/Edit/:customerId",adminFile.testingCustomerEdit);
 router.delete('/Customers/Delete/:customerId', adminFile.deleteCustomer);
 router.post("/Customers/Post/newCustomer",adminFile.postNewCustomer);
 

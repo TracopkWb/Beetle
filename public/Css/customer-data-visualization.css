@@ -286,6 +286,10 @@ button {
     background: #4E8F4B;
 }
 
+.save:disabled {
+    background: #6C757D;
+}
+
 .car-actions {
     display: flex;
     flex-direction: column;

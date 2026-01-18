@@ -172,7 +172,7 @@ const testingCustomerViewServer = async(req,res)=>{
     res.sendFile(customerViewPage);
 }
 
-const testEditCustomer = async(req,res)=>{
+const testingCustomerEditServer = async(req,res)=>{
     console.log('Testing cx edit page', req.params);
     res.sendFile(customerEditPage);
 }
@@ -342,7 +342,7 @@ export default {
     getCustomerInfo: getCustomerInfo,
     deleteCustomer: deleteCustomer,
     postNewCustomer: postNewCustomer,
-    testEditCustomer:testEditCustomer,
+    testingCustomerEdit:testingCustomerEditServer,
     testingCustomerView:testingCustomerViewServer,
     
 

@@ -117,6 +117,11 @@ class customerFullData extends HTMLElement {
                 if (selectedButton.action === 'edit') {
                     console.log('Editing cx!');
                     this.toggleEditMode(selectedButton.id, false);
+                    console.log(this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`))
+                    const cxForm = this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`)
+                    cxForm.addEventListener('input',()=>{
+                        
+                    })
                 } else if (selectedButton.action === 'save') {
                     console.log('Saving cx!');
                     this.toggleEditMode(selectedButton.id, false);
@@ -124,12 +129,13 @@ class customerFullData extends HTMLElement {
                     console.log('Cancel Action!');
                     this.toggleEditMode(selectedButton.id, false);
                 }
-
+                
                 console.log(`Cx data: ${selectedButton.id}`);
             } else if (selectedButton.for === 'car') {
                 if (selectedButton.action === 'edit') {
                     console.log('Editing cx!');
                     this.toggleEditMode(selectedButton.id, false);
+                    console.log(this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`))
                 } else if (selectedButton.action === 'save') {
                     console.log('Saving cx!');
                     this.toggleEditMode(selectedButton.id, false);
@@ -139,7 +145,7 @@ class customerFullData extends HTMLElement {
                 }
 
             }
-
+            
         });
 
     }
@@ -196,6 +202,7 @@ class customerFullData extends HTMLElement {
         cxButtonSaveOption.setAttribute('data-action-for', `cx`);
         cxButtonSaveOption.setAttribute('data-action', `save`);
         cxButtonSaveOption.setAttribute('data-id', `${cxData.cos_Id}`);
+        cxButtonSaveOption.disabled = true;
         // console.log(cxButtonSaveOption);
 
         const cxButtonCancelOption = this.fullCustomerCard.querySelector('[data-button-origin = "cx-form-cancel"]');
@@ -344,6 +351,7 @@ class customerFullData extends HTMLElement {
             saveCarButton.dataset.id = `${car.car_Id}`;
             saveCarButton.textContent = 'Save';
             saveCarButton.classList.add('save');
+            saveCarButton.disabled = true;
             
             //Form Cancel button 
             const cancelCarButton = document.createElement('button');
