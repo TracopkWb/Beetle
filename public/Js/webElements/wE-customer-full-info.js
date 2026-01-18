@@ -120,7 +120,7 @@ class customerFullData extends HTMLElement {
                     console.log(this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`))
                     const cxForm = this.shadowRoot.querySelector(`[data-id="${selectedButton.id}"]`)
                     cxForm.addEventListener('input',()=>{
-                        
+                        console.log(1)
                     })
                 } else if (selectedButton.action === 'save') {
                     console.log('Saving cx!');
